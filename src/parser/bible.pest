@@ -1,0 +1,9 @@
+total = set
+
+set = {
+    book ~ section ~ verse
+}
+
+verse = {
+    (section? ~ )
+}
