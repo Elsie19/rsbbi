@@ -1,0 +1,16 @@
+[package]
+name = "rsbbi"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.5.2", features = ["derive"] }
+html2md = "0.2.14"
+reqwest = { version = "0.11.24", features = ["blocking"] }
+serde = { version = "1.0.197", features = ["derive", "serde_derive"] }
+serde_json = "1.0.114"
+serde_path_to_error = "0.1.15"
+termimad = "0.29.1"
+url = "2.5.0"
