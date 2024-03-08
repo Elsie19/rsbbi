@@ -53,20 +53,6 @@ enum Commands {
         #[clap(required = true)]
         rest: Vec<String>,
     },
-
-    /// Search definition for word
-    ///
-    /// This command will search for the definition(s) of words
-    #[clap(aliases = &["d", "def"])]
-    Define {
-        /// Search for word in substring
-        #[clap(short, long, default_value_t = false)]
-        substring: bool,
-
-        /// Word
-        #[clap(required = true)]
-        word: Vec<String>,
-    },
 }
 
 #[derive(Debug)]
@@ -189,31 +175,5 @@ fn main() {
             skin.print_text(&formatted_string);
         }
         Commands::Commentary { lines: _, rest: _ } => todo!("Working on it"),
-        Commands::Define { substring, word } => {
-            let mut parameters = vec![];
-            if *substring {
-                parameters.push(("always_split", "1"))
-            } else {
-                parameters.push(("always_split", "0"))
-            }
-            let spaced_word = word.join(" ");
-            let parsed_json = download(
-                format!(
-                    "https://www.sefaria.org/api/words/{}",
-                    urlencoding::encode(&spaced_word)
-                )
-                .as_str(),
-                parameters,
-            );
-            if parsed_json.as_array().unwrap().is_empty() {
-                eprintln!("Word '{}' not found", spaced_word);
-                std::process::exit(1);
-            }
-            for section in parsed_json.as_array().iter() {
-                for part in section.iter() {
-                    println!("{:?}", part["content"]);
-                }
-            }
-        }
     }
 }
