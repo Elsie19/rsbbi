@@ -55,7 +55,7 @@ enum BibleRange {
 
 fn main() {
     let args = Args::parse();
-    let mut parameters = vec![("commentary", "0")];
+    let mut parameters = vec![("commentary", "0"), ("context", "0")];
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
@@ -124,23 +124,17 @@ fn main() {
             }
 
             match bible_verse_range {
-                BibleRange::Range((first, last)) => {
+                BibleRange::Range((_first, _last)) => {
                     for (idx, _line) in output_vec.iter().enumerate() {
-                        if (first..=last).contains(&idx) {
-                            if *lines {
-                                formatted_string.push_str(
-                                    format!(
-                                        "> *{}* {}\n>\n",
-                                        idx,
-                                        output_vec.get(idx - 1).unwrap()
-                                    )
+                        if *lines {
+                            formatted_string.push_str(
+                                format!("> *{}* {}\n>\n", (idx + 1), output_vec.get(idx).unwrap())
                                     .as_str(),
-                                );
-                            } else {
-                                formatted_string.push_str(
-                                    format!("> {}\n>\n", output_vec.get(idx - 1).unwrap()).as_str(),
-                                );
-                            }
+                            );
+                        } else {
+                            formatted_string.push_str(
+                                format!("> {}\n>\n", output_vec.get(idx).unwrap()).as_str(),
+                            );
                         }
                     }
                 }
