@@ -1,3 +1,0 @@
-- Parse bible verses
-
-<Book> <Section>{:<Verse>{-<Range>}}

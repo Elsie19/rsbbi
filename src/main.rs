@@ -18,9 +18,10 @@ struct Args {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Search in sources
+    /// Search verses in sources
     ///
     /// This command will search sources in Jewish literature
+    #[clap(alias = "s")]
     Search {
         /// Constrict search to certain sources
         #[clap(short = 'x', long, use_value_delimiter = true, value_delimiter = ',')]
@@ -30,6 +31,19 @@ enum Commands {
         #[clap(short = 'c', long)]
         commentary: bool,
 
+        /// Include line numbers
+        #[clap(short, long)]
+        lines: bool,
+
+        /// Verse
+        rest: Vec<String>,
+    },
+
+    /// Search commentary on verses
+    ///
+    /// This command will search sources in Jewish literature
+    #[clap(aliases = &["c", "com"])]
+    Commentary {
         /// Include line numbers
         #[clap(short, long)]
         lines: bool,
@@ -96,6 +110,8 @@ fn main() {
 
             if *commentary {
                 parameters.push(("commentary", "1"))
+            } else {
+                parameters.push(("commentary", "0"))
             }
             let parsed_json = download(
                 format!(
@@ -160,5 +176,6 @@ fn main() {
 
             skin.print_text(&formatted_string);
         }
+        _ => todo!("Working on it"),
     }
 }
