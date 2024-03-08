@@ -142,6 +142,8 @@ fn main() {
                 // Let's get rid of that single star turning into a silly little italic
                 html2md::parse_html(&output.join("\n").replace("*", r"\*").as_str());
 
+            //TODO: There is some bug with Rosh_Hashanah.2a and it can't somehow split into the vec
+            //TODO: so basically it just is one long thingy. I hope that made sense to future me
             match bible_verse_range {
                 BibleRange::Range((first, last)) => {
                     for (idx, line) in output_string.lines().enumerate().collect::<Vec<_>>() {
@@ -161,14 +163,17 @@ fn main() {
                             format!(
                                 "> *{}* {}\n",
                                 num,
-                                output_string.lines().collect::<Vec<_>>()[num]
+                                output_string.lines().collect::<Vec<_>>()[num - 1]
                             )
                             .as_str(),
                         )
                     } else {
                         formatted_string.push_str(
-                            format!("> {}\n", output_string.lines().collect::<Vec<_>>()[num])
-                                .as_str(),
+                            format!(
+                                "> {}\n",
+                                &output_string.lines().collect::<Vec<_>>()[num - 1]
+                            )
+                            .as_str(),
                         )
                     }
                 }
