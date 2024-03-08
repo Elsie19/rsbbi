@@ -23,14 +23,6 @@ enum Commands {
     /// This command will search sources in Jewish literature
     #[clap(alias = "s")]
     Search {
-        /// Constrict search to certain sources
-        #[clap(short = 'x', long, use_value_delimiter = true, value_delimiter = ',')]
-        constrict: Vec<String>,
-
-        /// Include commentary in query
-        #[clap(short = 'c', long)]
-        commentary: bool,
-
         /// Include line numbers
         #[clap(short, long)]
         lines: bool,
@@ -63,19 +55,14 @@ enum BibleRange {
 
 fn main() {
     let args = Args::parse();
-    let mut parameters: Vec<(&str, &str)> = vec![];
+    let mut parameters = vec![("commentary", "0")];
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
     skin.italic.set_fg(Blue);
 
     match &args.cmd {
-        Commands::Search {
-            constrict: _,
-            commentary,
-            lines,
-            rest,
-        } => {
+        Commands::Search { lines, rest } => {
             let spaced_rest = rest.join(" ");
             let parsed_bible_verse = BibleVerse::parse(Rule::total, &spaced_rest)
                 .expect("Could not parse bible verse")
@@ -109,11 +96,6 @@ fn main() {
                 }
             }
 
-            if *commentary {
-                parameters.push(("commentary", "1"))
-            } else {
-                parameters.push(("commentary", "0"))
-            }
             let parsed_json = download(
                 format!(
                     "https://www.sefaria.org/api/texts/{}",
