@@ -3,5 +3,5 @@
 Commands:
 
 ```bash
-rsbii search <verse> # Will search all sources
+rsbbi search <verse> # Will search all sources
 ```

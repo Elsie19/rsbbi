@@ -1,9 +1,25 @@
-total = set
+// <Book> <Section>{:<Verse>{-<Range>}}
+total = { SOI ~ set ~ EOI }
 
-set = {
-    book ~ section ~ verse
+WHITESPACE = _{ " " }
+
+set = _{
+    book ~ section ~ (":" ~ verse)?
+}
+
+book = @{
+    (ASCII_ALPHANUMERIC ~ WHITESPACE)? ~ ASCII_ALPHANUMERIC+
+}
+
+section = {
+    ASCII_ALPHANUMERIC+
 }
 
 verse = {
-    (section? ~ )
+    range
+  | number
 }
+
+number = { ASCII_DIGIT+ }
+
+range = { ASCII_ALPHANUMERIC+ ~ "-" ~ ASCII_ALPHANUMERIC+ }
