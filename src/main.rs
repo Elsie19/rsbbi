@@ -65,7 +65,6 @@ fn main() {
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
-    skin.bold.set_fg(Yellow);
     skin.italic.set_fg(Blue);
 
     match &args.cmd {
@@ -142,13 +141,21 @@ fn main() {
 
             match bible_verse_range {
                 BibleRange::Range((first, last)) => {
-                    for (idx, line) in output_vec.iter().enumerate() {
+                    for (idx, _line) in output_vec.iter().enumerate() {
                         if (first..=last).contains(&idx) {
                             if *lines {
-                                formatted_string
-                                    .push_str(format!("> *{}* {}\n>\n", idx, line).as_str());
+                                formatted_string.push_str(
+                                    format!(
+                                        "> *{}* {}\n>\n",
+                                        idx,
+                                        output_vec.get(idx - 1).unwrap()
+                                    )
+                                    .as_str(),
+                                );
                             } else {
-                                formatted_string.push_str(format!("> {}\n>\n", line).as_str());
+                                formatted_string.push_str(
+                                    format!("> {}\n>\n", output_vec.get(idx - 1).unwrap()).as_str(),
+                                );
                             }
                         }
                     }
