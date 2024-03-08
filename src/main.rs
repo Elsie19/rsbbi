@@ -51,6 +51,19 @@ enum Commands {
         /// Verse
         rest: Vec<String>,
     },
+
+    /// Search definition for word
+    ///
+    /// This command will search for the definition(s) of words
+    #[clap(aliases = &["d", "def"])]
+    Define {
+        /// Search for word in substring
+        #[clap(short, long, default_value_t = false)]
+        substring: bool,
+
+        /// Word
+        word: Vec<String>,
+    },
 }
 
 #[derive(Debug)]
@@ -114,7 +127,7 @@ fn main() {
             }
             let parsed_json = download(
                 format!(
-                    "http://www.sefaria.org/api/texts/{}",
+                    "https://www.sefaria.org/api/texts/{}",
                     urlencoding::encode(&spaced_rest)
                 )
                 .as_str(),
@@ -122,7 +135,7 @@ fn main() {
             );
             formatted_string.push_str(&format!(
                 "# {} ~ {}",
-                parsed_json["sectionRef"].as_str().unwrap(),
+                parsed_json["firstAvailableSectionRef"].as_str().unwrap(),
                 parsed_json["type"].as_str().unwrap()
             ));
             formatted_string.push_str("\n---\n");
@@ -172,6 +185,28 @@ fn main() {
 
             skin.print_text(&formatted_string);
         }
-        _ => todo!("Working on it"),
+        Commands::Commentary { lines: _, rest: _ } => todo!("Working on it"),
+        Commands::Define { substring, word } => {
+            let mut parameters = vec![];
+            if *substring {
+                parameters.push(("always_split", "1"))
+            } else {
+                parameters.push(("always_split", "0"))
+            }
+            let spaced_word = word.join(" ");
+            let parsed_json = download(
+                format!(
+                    "https://www.sefaria.org/api/words/{}",
+                    urlencoding::encode(&spaced_word)
+                )
+                .as_str(),
+                parameters,
+            );
+            if parsed_json.as_array().unwrap().is_empty() {
+                eprintln!("Word '{}' not found", spaced_word);
+                std::process::exit(1);
+            }
+            println!("{}", parsed_json);
+        }
     }
 }
