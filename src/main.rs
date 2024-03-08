@@ -128,8 +128,6 @@ fn main() {
             ));
             formatted_string.push_str("\n---\n");
 
-            // What we're doing here is because sefaria gives us html but in a line by line array,
-            // we gotta have the full thingy in a string because *then* we can parse it.
             let mut output = vec![];
             for i in parsed_json["text"].as_array().iter() {
                 for j in i.iter() {
@@ -137,16 +135,14 @@ fn main() {
                 }
             }
 
-            // Finally parse that out
-            let output_string =
-                // Let's get rid of that single star turning into a silly little italic
-                html2md::parse_html(&output.join("\n").replace("*", r"\*").as_str());
+            let mut output_vec = vec![];
+            for line in &output {
+                output_vec.push(html2md::parse_html(line.replace("*", r"\*").as_str()));
+            }
 
-            //TODO: There is some bug with Rosh_Hashanah.2a and it can't somehow split into the vec
-            //TODO: so basically it just is one long thingy. I hope that made sense to future me
             match bible_verse_range {
                 BibleRange::Range((first, last)) => {
-                    for (idx, line) in output_string.lines().enumerate().collect::<Vec<_>>() {
+                    for (idx, line) in output_vec.iter().enumerate() {
                         if (first..=last).contains(&idx) {
                             if *lines {
                                 formatted_string
@@ -159,22 +155,10 @@ fn main() {
                 }
                 BibleRange::Number(num) => {
                     if *lines {
-                        formatted_string.push_str(
-                            format!(
-                                "> *{}* {}\n",
-                                num,
-                                output_string.lines().collect::<Vec<_>>()[num - 1]
-                            )
-                            .as_str(),
-                        )
+                        formatted_string
+                            .push_str(format!("> *{}* {}\n", num, output_vec[num - 1]).as_str())
                     } else {
-                        formatted_string.push_str(
-                            format!(
-                                "> {}\n",
-                                &output_string.lines().collect::<Vec<_>>()[num - 1]
-                            )
-                            .as_str(),
-                        )
+                        formatted_string.push_str(format!("> {}\n", output_vec[num - 1]).as_str())
                     }
                 }
             }
