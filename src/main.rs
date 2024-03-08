@@ -36,6 +36,7 @@ enum Commands {
         lines: bool,
 
         /// Verse
+        #[clap(required = true)]
         rest: Vec<String>,
     },
 
@@ -49,6 +50,7 @@ enum Commands {
         lines: bool,
 
         /// Verse
+        #[clap(required = true)]
         rest: Vec<String>,
     },
 
@@ -62,6 +64,7 @@ enum Commands {
         substring: bool,
 
         /// Word
+        #[clap(required = true)]
         word: Vec<String>,
     },
 }
@@ -206,7 +209,11 @@ fn main() {
                 eprintln!("Word '{}' not found", spaced_word);
                 std::process::exit(1);
             }
-            println!("{}", parsed_json);
+            for section in parsed_json.as_array().iter() {
+                for part in section.iter() {
+                    println!("{:?}", part["content"]);
+                }
+            }
         }
     }
 }
