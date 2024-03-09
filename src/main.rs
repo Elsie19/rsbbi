@@ -56,7 +56,7 @@ enum BibleRange {
 
 fn main() {
     let args = Args::parse();
-    let parameters = vec![("commentary", "0"), ("context", "0")];
+    let mut parameters = vec![("commentary", "0")];
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
@@ -71,18 +71,18 @@ fn main() {
                 .next()
                 .unwrap();
 
-            let mut bible_verse_range: BibleRange = BibleRange::Number(1);
+            let mut opt_bible_verse_range: Option<BibleRange> = None;
 
             for line in parsed_bible_verse.into_inner() {
                 match line.as_rule() {
                     Rule::EOI => break,
                     Rule::verse => {
-                        bible_verse_range =
+                        opt_bible_verse_range =
                             match line.clone().into_inner().next().unwrap().as_rule() {
-                                Rule::range => BibleRange::Range(range_to_rs_range(
+                                Rule::range => Some(BibleRange::Range(range_to_rs_range(
                                     line.into_inner().next().unwrap().as_str().trim(),
-                                )),
-                                Rule::number => BibleRange::Number(
+                                ))),
+                                Rule::number => Some(BibleRange::Number(
                                     line.into_inner()
                                         .next()
                                         .unwrap()
@@ -90,13 +90,19 @@ fn main() {
                                         .trim()
                                         .parse()
                                         .unwrap(),
-                                ),
+                                )),
                                 _ => unreachable!(),
                             };
                     }
                     _ => (),
                 }
             }
+
+            parameters.push(if opt_bible_verse_range.is_none() {
+                ("context", "0")
+            } else {
+                ("context", "0")
+            });
 
             let parsed_json = download(
                 format!(
@@ -106,6 +112,18 @@ fn main() {
                 .as_str(),
                 parameters,
             );
+
+            // If we never got a range, we should get the full text, then set that to the range of
+            // 0..text.len() so we get the full text
+            if opt_bible_verse_range.is_none() {
+                opt_bible_verse_range = Some(BibleRange::Range((
+                    0,
+                    parsed_json["text"].as_array().iter().len(),
+                )));
+            }
+
+            let bible_verse_range = opt_bible_verse_range.unwrap();
+
             formatted_string.push_str(&format!(
                 "# {} ~ {}",
                 parsed_json
