@@ -1,11 +1,14 @@
 mod common;
+mod logging;
 mod parser;
 
 use clap::Parser;
 use common::download_json::{download, post_download};
 use common::search::Search;
+use logging::log::{suggested_path, Log};
 use parser::args::{Args, Commands};
 use parser::bible_verse::{range_to_rs_range, BibleRange, BibleVerse, Rule};
+use parser::tetragrammaton::check_for_tetra;
 use pest::Parser as PestParser;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 use urlencoding;
@@ -79,6 +82,13 @@ fn main() {
             }
 
             let bible_verse_range = opt_bible_verse_range.unwrap();
+
+            if check_for_tetra(&parsed_json["text"].as_array().unwrap()) {
+                let path = suggested_path();
+                let bruh = path.as_path();
+                let log = Log::new(&bruh).unwrap();
+                log.log(parsed_json["text"].as_array().unwrap().to_vec());
+            }
 
             formatted_string.push_str(&format!(
                 "# {} ~ {}",
