@@ -113,7 +113,7 @@ fn main() {
 
             let mut output_vec = vec![];
             for line in &output {
-                output_vec.push(html2md::parse_html(line.replace("*", r"\*").as_str()));
+                output_vec.push(html2md::parse_html(line.replace("*", " ").as_str()));
             }
 
             match bible_verse_range {

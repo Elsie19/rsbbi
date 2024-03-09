@@ -592,8 +592,7 @@ checksum = "d231dfb89cfffdbc30e7fc41579ed6066ad03abda9e567ccafae602b97ec5024"
 [[package]]
 name = "html2md"
 version = "0.2.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be92446e11d68f5d71367d571c229d09ced1f24ab6d08ea0bff329d5f6c0b2a3"
+source = "git+https://github.com/Elsie19/html2md.git#eed622c50faef1c4e6ea78d496d83f4c688ad816"
 dependencies = [
  "html5ever",
  "jni",
