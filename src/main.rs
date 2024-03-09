@@ -71,7 +71,7 @@ fn main() {
                 .next()
                 .unwrap();
 
-            let mut bible_verse_range: BibleRange = BibleRange::Number(0);
+            let mut bible_verse_range: BibleRange = BibleRange::Number(1);
 
             for line in parsed_bible_verse.into_inner() {
                 match line.as_rule() {
