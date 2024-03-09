@@ -12,7 +12,7 @@ use urlencoding;
 
 fn main() {
     let args = Args::parse();
-    let mut parameters = vec![("commentary", "0")];
+    let mut parameters = vec![("commentary", "0"), ("stripItags", "1")];
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
@@ -113,7 +113,7 @@ fn main() {
 
             let mut output_vec = vec![];
             for line in &output {
-                output_vec.push(html2md::parse_html(line.replace("*", " ").as_str()));
+                output_vec.push(html2md::parse_html(line));
             }
 
             match bible_verse_range {
