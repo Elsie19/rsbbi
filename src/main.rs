@@ -85,8 +85,7 @@ fn main() {
 
             if check_for_tetra(&parsed_json["text"].as_array().unwrap()) {
                 let path = suggested_path();
-                let bruh = path.as_path();
-                let log = Log::new(&bruh).unwrap();
+                let log = Log::new(&path).unwrap();
                 log.log(parsed_json["text"].as_array().unwrap().to_vec());
             }
 

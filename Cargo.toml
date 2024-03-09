@@ -21,3 +21,8 @@ strip_markdown = "0.2.0"
 termimad = "0.29.1"
 url = "2.5.0"
 urlencoding = "2.1.3"
+
+[features]
+tetragrammaton-logging = []
+
+default = ["tetragrammaton-logging"]

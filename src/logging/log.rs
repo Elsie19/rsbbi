@@ -1,15 +1,19 @@
 use chrono::{Datelike, Timelike, Utc};
 use std::env;
+#[cfg(feature = "tetragrammaton-logging")]
 use std::fs::OpenOptions;
+#[cfg(feature = "tetragrammaton-logging")]
 use std::io::prelude::Write;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Log<'a> {
     file: &'a Path,
 }
 
 impl Log<'_> {
+    #[cfg(feature = "tetragrammaton-logging")]
     pub fn new(path: &Path) -> Result<Log, std::io::Error> {
         let prefix = &path.parent().unwrap();
         std::fs::create_dir_all(prefix).unwrap();
@@ -19,15 +23,24 @@ impl Log<'_> {
         }
     }
 
-    pub fn log(&self, text: Vec<serde_json::Value>) {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(self.file)
-            .unwrap();
+    #[cfg(not(feature = "tetragrammaton-logging"))]
+    pub fn new(path: &Path) -> Result<Log, std::io::Error> {
+        Ok(Log { file: path })
+    }
 
-        for line in text {
-            writeln!(file, "{}", line).unwrap();
+    #[allow(unused_variables)]
+    pub fn log(&self, text: Vec<serde_json::Value>) {
+        #[cfg(feature = "tetragrammaton-logging")]
+        {
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(self.file)
+                .unwrap();
+
+            for line in text {
+                writeln!(file, "{}", line).unwrap();
+            }
         }
     }
 }
