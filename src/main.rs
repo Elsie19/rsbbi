@@ -55,7 +55,7 @@ enum BibleRange {
 
 fn main() {
     let args = Args::parse();
-    let mut parameters = vec![("commentary", "0"), ("context", "0")];
+    let parameters = vec![("commentary", "0"), ("context", "0")];
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
@@ -69,7 +69,7 @@ fn main() {
                 .next()
                 .unwrap();
 
-            let mut bible_verse_range: BibleRange = BibleRange::Number(1);
+            let mut bible_verse_range: BibleRange = BibleRange::Number(0);
 
             for line in parsed_bible_verse.into_inner() {
                 match line.as_rule() {
@@ -106,15 +106,28 @@ fn main() {
             );
             formatted_string.push_str(&format!(
                 "# {} ~ {}",
-                parsed_json["firstAvailableSectionRef"].as_str().unwrap(),
+                parsed_json
+                    .get("ref")
+                    .expect("Could not parse out 'ref'")
+                    .as_str()
+                    .unwrap(),
                 parsed_json["type"].as_str().unwrap()
             ));
             formatted_string.push_str("\n---\n");
 
             let mut output = vec![];
-            for i in parsed_json["text"].as_array().iter() {
-                for j in i.iter() {
-                    output.push(j.as_str().expect("Could not parse"));
+            if parsed_json["text"].is_string() {
+                output.push(parsed_json["text"].as_str().unwrap());
+            } else {
+                for i in parsed_json["text"].as_array().iter() {
+                    match bible_verse_range {
+                        BibleRange::Range((_first, _last)) => {
+                            for j in i.iter() {
+                                output.push(j.as_str().expect("Could not parse"));
+                            }
+                        }
+                        _ => unreachable!("Somehow a single string was parsed as an array"),
+                    }
                 }
             }
 
@@ -140,10 +153,12 @@ fn main() {
                 }
                 BibleRange::Number(num) => {
                     if *lines {
-                        formatted_string
-                            .push_str(format!("> *{}* {}\n", num, output_vec[num - 1]).as_str())
+                        formatted_string.push_str(
+                            format!("> *{}* {}\n", num, output_vec.get(num - 1).unwrap()).as_str(),
+                        )
                     } else {
-                        formatted_string.push_str(format!("> {}\n", output_vec[num - 1]).as_str())
+                        formatted_string
+                            .push_str(format!("> {}\n", output_vec.get(num - 1).unwrap()).as_str())
                     }
                 }
             }
