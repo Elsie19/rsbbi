@@ -5,16 +5,10 @@ use clap::Parser;
 use common::download_json::{download, post_download};
 use common::search::Search;
 use parser::args::{Args, Commands};
-use parser::bible_verse::{range_to_rs_range, BibleVerse, Rule};
+use parser::bible_verse::{range_to_rs_range, BibleRange, BibleVerse, Rule};
 use pest::Parser as PestParser;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 use urlencoding;
-
-#[derive(Debug)]
-enum BibleRange {
-    Number(usize),
-    Range((usize, usize)),
-}
 
 fn main() {
     let args = Args::parse();

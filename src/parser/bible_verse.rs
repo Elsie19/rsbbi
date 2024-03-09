@@ -21,3 +21,9 @@ pub fn range_to_rs_range(range: &str) -> (usize, usize) {
             .expect("Could not parse second number in range"),
     )
 }
+
+#[derive(Debug)]
+pub enum BibleRange {
+    Number(usize),
+    Range((usize, usize)),
+}
