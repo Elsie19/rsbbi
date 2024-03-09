@@ -160,11 +160,11 @@ fn main() {
                 BibleRange::Number(num) => {
                     if *lines {
                         formatted_string.push_str(
-                            format!("> *{}* {}\n", num, output_vec.get(num - 1).unwrap()).as_str(),
+                            format!("> *{}* {}\n", num, output_vec.get(0).unwrap()).as_str(),
                         )
                     } else {
                         formatted_string
-                            .push_str(format!("> {}\n", output_vec.get(num - 1).unwrap()).as_str())
+                            .push_str(format!("> {}\n", output_vec.get(0).unwrap()).as_str())
                     }
                 }
             }
