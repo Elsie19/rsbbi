@@ -1,52 +1,14 @@
 mod common;
 mod parser;
 
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use common::download_json::{download, post_download};
 use common::search::Search;
+use parser::args::{Args, Commands};
 use parser::bible_verse::{range_to_rs_range, BibleVerse, Rule};
 use pest::Parser as PestParser;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 use urlencoding;
-
-/// RSBBI is a rust based Judaism text viewer
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None, arg_required_else_help = true)]
-struct Args {
-    #[command(subcommand)]
-    cmd: Commands,
-}
-
-#[derive(Subcommand, Debug)]
-enum Commands {
-    /// Search verses in sources
-    ///
-    /// This command will search sources in Jewish literature
-    #[clap(alias = "s")]
-    Search {
-        /// Include line numbers
-        #[clap(short, long)]
-        lines: bool,
-
-        /// Verse
-        #[clap(required = true)]
-        rest: Vec<String>,
-    },
-
-    /// Search keywords
-    ///
-    /// This command will search keywords in Jewish literature
-    #[clap(aliases = &["key", "k"])]
-    Keyword {
-        /// Limit output size
-        #[clap(short, long, default_value_t = 50)]
-        size: i32,
-
-        /// Verse
-        #[clap(required = true)]
-        rest: Vec<String>,
-    },
-}
 
 #[derive(Debug)]
 enum BibleRange {

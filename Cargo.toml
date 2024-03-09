@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.2", features = ["derive"] }
+clap-num = "1.1.1"
 html2md = "0.2.14"
 html2text = "0.12.4"
 pest = "2.7.8"

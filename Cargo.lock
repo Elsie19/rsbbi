@@ -163,6 +163,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap-num"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e063d263364859dc54fb064cedb7c122740cd4733644b14b176c097f51e8ab7"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "clap_builder"
 version = "4.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -910,6 +919,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
 
 [[package]]
+name = "num-traits"
+version = "0.2.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da0df0e5185db44f69b44f26786fe401b6c293d1907744beaa7fa62b2e5a517a"
+dependencies = [
+ "autocfg",
+]
+
+[[package]]
 name = "num_cpus"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1263,6 +1281,7 @@ name = "rsbbi"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "clap-num",
  "html2md",
  "html2text",
  "pest",
