@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+// The thing we send for `keyword`
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Search<'a> {
     pub query: String,
