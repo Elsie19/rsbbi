@@ -2,7 +2,8 @@ mod common;
 mod parser;
 
 use clap::{Parser, Subcommand};
-use common::download_json::download;
+use common::download_json::{download, post_download};
+use common::search::Search;
 use parser::bible_verse::{range_to_rs_range, BibleVerse, Rule};
 use pest::Parser as PestParser;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
@@ -32,14 +33,14 @@ enum Commands {
         rest: Vec<String>,
     },
 
-    /// Search commentary on verses
+    /// Search keywords
     ///
-    /// This command will search sources in Jewish literature
-    #[clap(aliases = &["c", "com"])]
-    Commentary {
-        /// Include line numbers
-        #[clap(short, long)]
-        lines: bool,
+    /// This command will search keywords in Jewish literature
+    #[clap(aliases = &["key", "k"])]
+    Keyword {
+        /// Limit output size
+        #[clap(short, long, default_value_t = 50)]
+        size: i32,
 
         /// Verse
         #[clap(required = true)]
@@ -60,6 +61,7 @@ fn main() {
 
     let mut skin = MadSkin::default();
     skin.italic.set_fg(Blue);
+    skin.bold.set_fg(Blue);
 
     match &args.cmd {
         Commands::Search { lines, rest } => {
@@ -126,7 +128,11 @@ fn main() {
                                 output.push(j.as_str().expect("Could not parse"));
                             }
                         }
-                        _ => unreachable!("Somehow a single string was parsed as an array"),
+                        BibleRange::Number(_) => {
+                            for j in i.iter() {
+                                output.push(j.as_str().expect("Could not parse"));
+                            }
+                        }
                     }
                 }
             }
@@ -165,6 +171,27 @@ fn main() {
 
             skin.print_text(&formatted_string);
         }
-        Commands::Commentary { lines: _, rest: _ } => todo!("Working on it"),
+        Commands::Keyword { size, rest } => {
+            let query = Search {
+                query: rest.join(" ").to_string(),
+                query_type: "text",
+                size: *size,
+            };
+            let mut formatted_string = vec![];
+            let serded_query = serde_json::to_value(&query).unwrap();
+            let text = post_download(
+                "https://www.sefaria.org/api/search-wrapper",
+                serded_query.to_string(),
+                parameters,
+            );
+            for line in &text.hits.hits {
+                formatted_string.push("---".to_string());
+                formatted_string.push(format!("# {}", line.id).to_string());
+                for exact in &line.highlight.exact {
+                    formatted_string.push(format!("> {}", html2md::parse_html(exact)).to_string());
+                }
+            }
+            skin.print_text(&formatted_string.join("\n").to_string());
+        }
     }
 }
