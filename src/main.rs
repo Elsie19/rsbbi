@@ -10,6 +10,7 @@ use parser::args::{Args, Commands};
 use parser::bible_verse::{range_to_rs_range, BibleRange, BibleVerse, Rule};
 use parser::tetragrammaton::check_for_tetra;
 use pest::Parser as PestParser;
+use serde_json::Value;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 use urlencoding;
 
@@ -83,10 +84,17 @@ fn main() {
 
             let bible_verse_range = opt_bible_verse_range.unwrap();
 
-            if check_for_tetra(&parsed_json["text"].as_array().unwrap()) {
+            let tetra_checking: Vec<Value> = if parsed_json["text"].is_string() {
+                let mut dunno: Vec<Value> = vec![];
+                dunno.push(parsed_json["text"].clone());
+                dunno
+            } else {
+                parsed_json["text"].as_array().unwrap().to_vec()
+            };
+            if check_for_tetra(&tetra_checking) {
                 let path = suggested_path();
                 let log = Log::new(&path).unwrap();
-                log.log(parsed_json["text"].as_array().unwrap().to_vec());
+                log.log(tetra_checking);
             }
 
             formatted_string.push_str(&format!(
