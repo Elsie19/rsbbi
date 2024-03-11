@@ -5,11 +5,11 @@ mod setup;
 
 use clap::Parser;
 use common::download_json::{download, post_download};
-use common::search::Search;
 use logging::log::{suggested_path, Log};
 use parser::args::{Args, Commands};
 use parser::bible_verse::{parse_verse, BibleRange};
 use parser::tetragrammaton::check_for_tetra;
+use serde_json::json;
 use serde_json::Value;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 use urlencoding;
@@ -174,11 +174,8 @@ fn main() {
             skin.print_text(&formatted_string);
         }
         Commands::Keyword { size, rest } => {
-            let query = Search {
-                query: rest.join(" ").to_string(),
-                query_type: "text",
-                size: *size,
-            };
+            let query =
+                json!({ "query": rest.join(" ").to_string(), "type": "text", "size": *size, });
             let mut formatted_string = vec![];
             let serded_query = serde_json::to_value(&query).unwrap();
             let text = post_download(
