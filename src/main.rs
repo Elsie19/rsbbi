@@ -145,17 +145,22 @@ fn main() {
                     for (idx, _line) in output_vec.iter().enumerate() {
                         if *lines {
                             formatted_string.push_str(
-                                format!(
-                                    "> *{}* {}\n>\n",
-                                    (idx + first),
-                                    output_vec.get(idx).unwrap()
-                                )
-                                .as_str(),
+                                format!("> *{}* {}", (idx + first), output_vec.get(idx).unwrap())
+                                    .as_str(),
                             );
+                            if idx != output_vec.len() - 1 {
+                                formatted_string.push_str("\n>\n");
+                            } else {
+                                formatted_string.push_str("\n");
+                            }
                         } else {
-                            formatted_string.push_str(
-                                format!("> {}\n>\n", output_vec.get(idx).unwrap()).as_str(),
-                            );
+                            formatted_string
+                                .push_str(format!("> {}", output_vec.get(idx).unwrap()).as_str());
+                            if idx != output_vec.len() - 1 {
+                                formatted_string.push_str("\n>\n");
+                            } else {
+                                formatted_string.push_str("\n");
+                            }
                         }
                     }
                 }
