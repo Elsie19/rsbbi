@@ -16,4 +16,4 @@ rsbbi keyword two spines
 ```
 
 #### Other stuff to note
-I consulted with my Jewish friend and he said that if the [Tetragrammaton](https://en.wikipedia.org/wiki/Tetragrammaton) is shown on screen, it has to be stored, so I did that. If at any point during `search` the Tetragrammaton appears, it will be logged to `~/.local/state/rsbbi/`.
+I consulted with my Jewish friend and he said that if the [Tetragrammaton](https://en.wikipedia.org/wiki/Tetragrammaton) is shown on screen, it has to be stored, so I did that. If at any point during `search` the Tetragrammaton appears, it will be logged to `~/.local/state/rsbbi/`. For anyone who doesn't like that, you can compile without the `tetragrammaton-logging` feature ;).
