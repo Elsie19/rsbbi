@@ -49,8 +49,8 @@ pub fn parse_verse(verse: &String) -> ReturnedBibleVerse {
     for line in parsed_bible_verse.into_inner() {
         match line.as_rule() {
             Rule::EOI => break,
-            Rule::book => book = line.to_string(),
-            Rule::section => section = Some(line.to_string()),
+            Rule::book => book = line.as_str().to_string(),
+            Rule::section => section = Some(line.as_str().to_string()),
             Rule::verse => {
                 opt_bible_verse_range = match line.clone().into_inner().next().unwrap().as_rule() {
                     Rule::range => Some(BibleRange::Range(range_to_rs_range(

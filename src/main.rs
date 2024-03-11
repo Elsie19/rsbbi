@@ -36,6 +36,48 @@ fn main() {
                 parameters,
             );
 
+            // If we get only the book but nothing else, we should print a little menu
+            if parsed_verse.verse.is_none() && parsed_verse.section.is_none() {
+                let raw_index = download(
+                    format!(
+                        "https://www.sefaria.org/api/v2/raw/index/{}",
+                        parsed_verse.book
+                    )
+                    .as_str(),
+                    [("", "")].to_vec(),
+                );
+                println!(
+                    "{} ~ {}\nChapters: {}\nVerses: {}",
+                    parsed_json
+                        .get("ref")
+                        .expect("Could not parse out 'ref'")
+                        .as_str()
+                        .unwrap(),
+                    parsed_json["type"].as_str().unwrap(),
+                    raw_index
+                        .get("schema")
+                        .expect("Could not get 'schema'")
+                        .get("lengths")
+                        .expect("Could not get 'lengths'")
+                        .as_array()
+                        .expect("Could not convert to array")
+                        .to_vec()
+                        .get(0)
+                        .unwrap(),
+                    raw_index
+                        .get("schema")
+                        .expect("Could not get 'schema'")
+                        .get("lengths")
+                        .expect("Could not get 'lengths'")
+                        .as_array()
+                        .expect("Could not convert to array")
+                        .to_vec()
+                        .get(1)
+                        .unwrap()
+                );
+                std::process::exit(0);
+            }
+
             // If we never got a range, we should get the full text, then set that to the range of
             // 0..text.len() so we get the full text
             if parsed_verse.verse.is_none() {
