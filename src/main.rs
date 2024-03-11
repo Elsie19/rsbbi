@@ -49,7 +49,7 @@ fn main() {
                 println!(
                     "{} ~ {}\nChapters: {}\nVerses: {}",
                     parsed_json
-                        .get("ref")
+                        .get("book")
                         .expect("Could not parse out 'ref'")
                         .as_str()
                         .unwrap(),
