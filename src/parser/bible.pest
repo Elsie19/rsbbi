@@ -4,7 +4,7 @@ total = { SOI ~ set ~ EOI }
 WHITESPACE = _{ " " }
 
 set = _{
-    book ~ section ~ (":" ~ verse)?
+    book ~ (section ~ (":" ~ verse)?)?
 }
 
 book = @{
