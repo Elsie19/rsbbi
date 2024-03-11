@@ -1,6 +1,7 @@
 mod common;
 mod logging;
 mod parser;
+mod setup;
 
 use clap::Parser;
 use common::download_json::{download, post_download};
@@ -16,6 +17,7 @@ use urlencoding;
 fn main() {
     let args = Args::parse();
     let parameters = vec![("commentary", "0"), ("stripItags", "1"), ("context", "0")];
+    setup::setup::setup_toc();
     let mut formatted_string = String::new();
 
     let mut skin = MadSkin::default();
