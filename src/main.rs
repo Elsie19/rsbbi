@@ -18,7 +18,7 @@ fn main() {
     let args = Args::parse();
     let parameters = vec![("commentary", "0"), ("stripItags", "1"), ("context", "0")];
     setup::setup::setup_toc();
-    let mut formatted_string = String::new();
+    let mut formatted_string: Vec<String> = vec![];
 
     let mut skin = MadSkin::default();
     skin.italic.set_fg(Blue);
@@ -104,7 +104,7 @@ fn main() {
                 log.log(tetra_checking);
             }
 
-            formatted_string.push_str(&format!(
+            formatted_string.push(format!(
                 "# {} ~ {}",
                 parsed_json
                     .get("ref")
@@ -113,7 +113,7 @@ fn main() {
                     .unwrap(),
                 parsed_json["type"].as_str().unwrap()
             ));
-            formatted_string.push_str("\n---\n");
+            formatted_string.push("\n---\n".to_string());
 
             let mut output = vec![];
             if parsed_json["text"].is_string() {
@@ -143,40 +143,33 @@ fn main() {
             match bible_verse_range {
                 BibleRange::Range((first, _last)) => {
                     for (idx, _line) in output_vec.iter().enumerate() {
-                        if *lines {
-                            formatted_string.push_str(
-                                format!("> *{}* {}", (idx + first), output_vec.get(idx).unwrap())
-                                    .as_str(),
-                            );
-                            if idx != output_vec.len() - 1 {
-                                formatted_string.push_str("\n>\n");
-                            } else {
-                                formatted_string.push_str("\n");
-                            }
+                        formatted_string.push(if *lines {
+                            format!("> *{}* {}", (idx + first), output_vec.get(idx).unwrap())
                         } else {
-                            formatted_string
-                                .push_str(format!("> {}", output_vec.get(idx).unwrap()).as_str());
-                            if idx != output_vec.len() - 1 {
-                                formatted_string.push_str("\n>\n");
-                            } else {
-                                formatted_string.push_str("\n");
-                            }
+                            format!("> {}", output_vec.get(idx).unwrap())
+                        });
+
+                        if idx != output_vec.len() - 1 {
+                            formatted_string.push("\n>\n".to_string());
+                        } else {
+                            formatted_string.push("\n".to_string());
                         }
                     }
                 }
                 BibleRange::Number(num) => {
                     if *lines {
-                        formatted_string.push_str(
-                            format!("> *{}* {}\n", num, output_vec.get(0).unwrap()).as_str(),
-                        )
+                        formatted_string.push(format!(
+                            "> *{}* {}\n",
+                            num,
+                            output_vec.get(0).unwrap()
+                        ))
                     } else {
-                        formatted_string
-                            .push_str(format!("> {}\n", output_vec.get(0).unwrap()).as_str())
+                        formatted_string.push(format!("> {}\n", output_vec.get(0).unwrap()))
                     }
                 }
             }
 
-            skin.print_text(&formatted_string);
+            skin.print_text(&formatted_string.join(""));
         }
         Commands::Keyword { size, rest } => {
             let query =
