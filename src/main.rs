@@ -8,6 +8,7 @@ use common::download_json::{download, post_download};
 use logging::log::{suggested_path, Log};
 use parser::args::{Args, Commands};
 use parser::bible_verse::{parse_verse, BibleRange};
+use parser::shape::{shape_download, Shape};
 use parser::tetragrammaton::check_for_tetra;
 use serde_json::json;
 use serde_json::Value;
@@ -40,43 +41,23 @@ fn main() {
 
             // If we get only the book but nothing else, we should print a little menu
             if parsed_verse.verse.is_none() && parsed_verse.section.is_none() {
-                let raw_index = download(
-                    format!(
-                        "https://www.sefaria.org/api/v2/raw/index/{}",
-                        parsed_verse.book
-                    )
-                    .as_str(),
+                let raw_index: Shape = shape_download(
+                    format!("https://www.sefaria.org/api/shape/{}", parsed_verse.book).as_str(),
                     [("", "")].to_vec(),
                 );
-                println!(
-                    "{} ~ {}\nChapters: {}\nVerses: {}",
-                    parsed_json
-                        .get("book")
-                        .expect("Could not parse out 'ref'")
-                        .as_str()
-                        .unwrap(),
-                    parsed_json["type"].as_str().unwrap(),
-                    raw_index
-                        .get("schema")
-                        .expect("Could not get 'schema'")
-                        .get("lengths")
-                        .expect("Could not get 'lengths'")
-                        .as_array()
-                        .expect("Could not convert to array")
-                        .to_vec()
-                        .get(0)
-                        .unwrap(),
-                    raw_index
-                        .get("schema")
-                        .expect("Could not get 'schema'")
-                        .get("lengths")
-                        .expect("Could not get 'lengths'")
-                        .as_array()
-                        .expect("Could not convert to array")
-                        .to_vec()
-                        .get(1)
-                        .unwrap()
-                );
+
+                for section in raw_index {
+                    if section.book == spaced_rest {
+                        println!(
+                            "{} ~ {}\nChapters: {}\nVerses: {}",
+                            section.title,
+                            section.section,
+                            section.length,
+                            section.chapters.iter().sum::<i64>(),
+                        );
+                    }
+                }
+
                 std::process::exit(0);
             }
 
