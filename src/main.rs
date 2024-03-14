@@ -42,12 +42,16 @@ fn main() {
             // If we get only the book but nothing else, we should print a little menu
             if parsed_verse.verse.is_none() && parsed_verse.section.is_none() {
                 let raw_index: Shape = shape_download(
-                    format!("https://www.sefaria.org/api/shape/{}", parsed_verse.book).as_str(),
+                    format!(
+                        "https://www.sefaria.org/api/shape/{}",
+                        urlencoding::encode(&parsed_verse.book)
+                    )
+                    .as_str(),
                     [("", "")].to_vec(),
                 );
 
                 for section in raw_index {
-                    if section.book == spaced_rest {
+                    if section.title == spaced_rest {
                         println!(
                             "{} ~ {}\nChapters: {}\nVerses: {}",
                             section.title,

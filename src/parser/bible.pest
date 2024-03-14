@@ -3,12 +3,19 @@ total = { SOI ~ set ~ EOI }
 
 WHITESPACE = _{ " " }
 
+whitespace_with_commas = _{ " " | ", " | "\t" }
+
 set = _{
-    book ~ (section ~ (":" ~ verse)?)?
+    book ~ identifier
 }
 
-book = @{
-    (ASCII_ALPHANUMERIC ~ WHITESPACE)? ~ ASCII_ALPHANUMERIC+
+book = ${
+    // Should cover things like: `Dueteronomy`, `1 Chronicles`, `Zohar, Noach`
+    (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ whitespace_with_commas ~ ASCII_ALPHA+) | ASCII_ALPHA+)
+}
+
+identifier = _{
+    (section ~ (":" ~ verse)?)?
 }
 
 section = {
@@ -20,6 +27,6 @@ verse = {
   | number
 }
 
-number = { ASCII_DIGIT+ }
+number = _{ ASCII_DIGIT+ }
 
 range = { ASCII_ALPHANUMERIC+ ~ "-" ~ ASCII_ALPHANUMERIC+ }
