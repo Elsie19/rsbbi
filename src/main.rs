@@ -143,8 +143,7 @@ fn main() {
             skin.print_text(&formatted_string.join(""));
         }
         Commands::Keyword { size, rest } => {
-            let query =
-                json!({ "query": rest.join(" ").to_string(), "type": "text", "size": *size, });
+            let query = json!({ "query": rest.join(" "), "type": "text", "size": *size, });
             let mut formatted_string = vec![];
             let serded_query = serde_json::to_value(query).unwrap();
             let text = post_download(
