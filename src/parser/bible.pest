@@ -24,9 +24,11 @@ section = {
 
 verse = {
     range
-  | number
+  | verse_number
 }
 
 number = _{ ASCII_DIGIT+ }
+
+verse_number = { ASCII_DIGIT+ }
 
 range = { ASCII_ALPHANUMERIC+ ~ "-" ~ ASCII_ALPHANUMERIC+ }
