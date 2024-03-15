@@ -39,32 +39,6 @@ fn main() {
                 parameters,
             );
 
-            // If we get only the book but nothing else, we should print a little menu
-            if parsed_verse.verse.is_none() && parsed_verse.section.is_none() {
-                let raw_index: Shape = shape_download(
-                    format!(
-                        "https://www.sefaria.org/api/shape/{}",
-                        urlencoding::encode(&parsed_verse.book)
-                    )
-                    .as_str(),
-                    [("", "")].to_vec(),
-                );
-
-                for section in raw_index {
-                    if section.title == spaced_rest {
-                        println!(
-                            "{} ~ {}\nChapters: {}\nVerses: {}",
-                            section.title,
-                            section.section,
-                            section.length,
-                            section.chapters.iter().sum::<i64>(),
-                        );
-                    }
-                }
-
-                std::process::exit(0);
-            }
-
             // If we never got a range, we should get the full text, then set that to the range of
             // 0..text.len() so we get the full text
             if parsed_verse.verse.is_none() {
@@ -174,6 +148,30 @@ fn main() {
                 }
             }
             skin.print_text(&formatted_string.join("\n").to_string());
+        }
+        Commands::Info { book } => {
+            let spaced_rest = book.join(" ");
+
+            let raw_index: Shape = shape_download(
+                format!(
+                    "https://www.sefaria.org/api/shape/{}",
+                    urlencoding::encode(&parse_verse(&spaced_rest).book)
+                )
+                .as_str(),
+                [("", "")].to_vec(),
+            );
+
+            for section in raw_index {
+                if section.title == spaced_rest {
+                    println!(
+                        "{} ~ {}\nChapters: {}\nVerses: {}",
+                        section.title,
+                        section.section,
+                        section.length,
+                        section.chapters.iter().sum::<i64>(),
+                    );
+                }
+            }
         }
     }
 }

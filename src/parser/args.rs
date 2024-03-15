@@ -38,6 +38,16 @@ pub enum Commands {
         #[clap(required = true)]
         rest: Vec<String>,
     },
+
+    /// Get info on a book
+    ///
+    /// This command will search keywords in Jewish literature
+    #[clap(aliases = &["i", "in", "inf"])]
+    Info {
+        /// Book
+        #[clap(required = true)]
+        book: Vec<String>,
+    },
 }
 
 fn more_than_zero(num: &str) -> Result<i32, String> {
