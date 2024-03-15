@@ -15,7 +15,7 @@ book = ${
 }
 
 identifier = _{
-    (section ~ ((":" | ".") ~ verse)?)?
+    (section ~ ((":" | "." | ",") ~ verse)?)?
 }
 
 section = {

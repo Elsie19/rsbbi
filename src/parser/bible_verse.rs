@@ -263,4 +263,52 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn sefaria_valid_refs_multiple_words() {
+        assert_eq!(
+            parse_verse("Rambam Laws of Repentance 2:1"),
+            ReturnedBibleVerse {
+                book: "Rambam Laws of Repentance".to_string(),
+                section: Some("2".to_string()),
+                verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_section_seperator_period() {
+        assert_eq!(
+            parse_verse("Berakhot 2a.1"),
+            ReturnedBibleVerse {
+                book: "Berakhot".to_string(),
+                section: Some("2a".to_string()),
+                verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_section_seperator_comma() {
+        assert_eq!(
+            parse_verse("Berakhot 2a,1"),
+            ReturnedBibleVerse {
+                book: "Berakhot".to_string(),
+                section: Some("2a".to_string()),
+                verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_section_seperator_space() {
+        assert_eq!(
+            parse_verse("Berakhot 2a 1"),
+            ReturnedBibleVerse {
+                book: "Berakhot".to_string(),
+                section: Some("2a".to_string()),
+                verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
 }
