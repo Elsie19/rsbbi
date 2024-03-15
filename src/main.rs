@@ -158,7 +158,7 @@ fn main() {
                     formatted_string.push(format!("> {}", html2md::parse_html(exact)).to_string());
                 }
             }
-            skin.print_text(&formatted_string.join("\n").to_string());
+            skin.print_text(&formatted_string.join("\n"));
         }
         Commands::Info { book } => {
             let spaced_rest = book.join(" ");
