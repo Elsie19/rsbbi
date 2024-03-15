@@ -35,7 +35,7 @@ impl Log<'_> {
             let mut file = OpenOptions::new().append(true).open(self.file).unwrap();
 
             for line in text {
-                writeln!(file, "{}", line).unwrap();
+                writeln!(file, "{line}").unwrap();
             }
         }
     }
@@ -59,8 +59,8 @@ pub fn suggested_path() -> PathBuf {
         ".local",
         "state",
         "rsbbi",
-        format!("{}-{}-{}", year, month, day).as_str(),
-        format!("tetra-{}-{}-{}.log", hour, minute, seconds).as_str(),
+        format!("{year}-{month}-{day}").as_str(),
+        format!("tetra-{hour}-{minute}-{seconds}.log").as_str(),
     ]
     .iter()
     .collect();

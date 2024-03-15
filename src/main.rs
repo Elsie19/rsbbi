@@ -87,17 +87,8 @@ fn main() {
                 output.push(parsed_json[language].as_str().unwrap());
             } else {
                 for i in parsed_json[language].as_array().iter() {
-                    match bible_verse_range {
-                        BibleRange::Range((_, _)) => {
-                            for j in i.iter() {
-                                output.push(j.as_str().expect("Could not parse"));
-                            }
-                        }
-                        BibleRange::Number(_) => {
-                            for j in i.iter() {
-                                output.push(j.as_str().expect("Could not parse"));
-                            }
-                        }
+                    for j in i.iter() {
+                        output.push(j.as_str().expect("Could not parse"));
                     }
                 }
             }
@@ -129,9 +120,9 @@ fn main() {
                             "> *{}* {}\n",
                             num,
                             output_vec.first().unwrap()
-                        ))
+                        ));
                     } else {
-                        formatted_string.push(format!("> {}\n", output_vec.first().unwrap()))
+                        formatted_string.push(format!("> {}\n", output_vec.first().unwrap()));
                     }
                 }
             }
