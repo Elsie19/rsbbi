@@ -87,7 +87,7 @@ mod tests {
     #[test]
     fn simple_name() {
         assert_eq!(
-            parse_verse(&"Genesis".to_string()),
+            parse_verse("Genesis"),
             ReturnedBibleVerse {
                 book: "Genesis".to_string(),
                 section: None,
@@ -99,7 +99,7 @@ mod tests {
     #[test]
     fn comma_name() {
         assert_eq!(
-            parse_verse(&"Zohar, Noach".to_string()),
+            parse_verse("Zohar, Noach"),
             ReturnedBibleVerse {
                 book: "Zohar, Noach".to_string(),
                 section: None,
@@ -111,7 +111,7 @@ mod tests {
     #[test]
     fn simple_name_with_section() {
         assert_eq!(
-            parse_verse(&"Genesis 1".to_string()),
+            parse_verse("Genesis 1"),
             ReturnedBibleVerse {
                 book: "Genesis".to_string(),
                 section: Some(1.to_string()),
@@ -123,7 +123,7 @@ mod tests {
     #[test]
     fn simple_name_with_complex_section() {
         assert_eq!(
-            parse_verse(&"Deuteronomy 21b".to_string()),
+            parse_verse("Deuteronomy 21b"),
             ReturnedBibleVerse {
                 book: "Deuteronomy".to_string(),
                 section: Some("21b".to_string()),
@@ -135,7 +135,7 @@ mod tests {
     #[test]
     fn complex_name_with_complex_section() {
         assert_eq!(
-            parse_verse(&"Zohar, Bo 21b".to_string()),
+            parse_verse("Zohar, Bo 21b"),
             ReturnedBibleVerse {
                 book: "Zohar, Bo".to_string(),
                 section: Some("21b".to_string()),
@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn simple_name_with_verse() {
         assert_eq!(
-            parse_verse(&"Exodus 1:2".to_string()),
+            parse_verse("Exodus 1:2"),
             ReturnedBibleVerse {
                 book: "Exodus".to_string(),
                 section: Some("1".to_string()),
@@ -159,7 +159,7 @@ mod tests {
     #[test]
     fn simple_name_with_range() {
         assert_eq!(
-            parse_verse(&"Leviticus 22:2-10".to_string()),
+            parse_verse("Leviticus 22:2-10"),
             ReturnedBibleVerse {
                 book: "Leviticus".to_string(),
                 section: Some("22".to_string()),
@@ -171,11 +171,71 @@ mod tests {
     #[test]
     fn most_complex_everything() {
         assert_eq!(
-            parse_verse(&"4 Imaginary, Book 7b:2-10".to_string()),
+            parse_verse("4 Imaginary, Book 7b:2-10"),
             ReturnedBibleVerse {
                 book: "4 Imaginary, Book".to_string(),
                 section: Some("7b".to_string()),
                 verse: Some(BibleRange::Range((2, 10))),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_book() {
+        assert_eq!(
+            parse_verse("Bereishit"),
+            ReturnedBibleVerse {
+                book: "Bereishit".to_string(),
+                section: None,
+                verse: None,
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_book_and_section() {
+        assert_eq!(
+            parse_verse("Job 3"),
+            ReturnedBibleVerse {
+                book: "Job".to_string(),
+                section: Some("3".to_string()),
+                verse: None,
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_spaced_book_and_dot_section() {
+        assert_eq!(
+            parse_verse("Mishna Berakhot 4.2"),
+            ReturnedBibleVerse {
+                book: "Mishna Berakhot".to_string(),
+                section: Some("4".to_string()),
+                verse: Some(BibleRange::Number(2)),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_daf() {
+        assert_eq!(
+            parse_verse("Sanhedrin 4b"),
+            ReturnedBibleVerse {
+                book: "Sanhedrin".to_string(),
+                section: Some("4b".to_string()),
+                verse: None,
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_abbreviation() {
+        assert_eq!(
+            parse_verse("Ex. 12:2-8"),
+            ReturnedBibleVerse {
+                book: "Ex.".to_string(),
+                section: Some("12".to_string()),
+                verse: Some(BibleRange::Range((2, 8))),
             }
         );
     }
