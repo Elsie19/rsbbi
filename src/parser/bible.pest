@@ -6,7 +6,7 @@ WHITESPACE = _{ " " }
 whitespace_with_commas = _{ " " | ", " | "\t" | "_" }
 
 set = _{
-    book ~ "."? ~ identifier
+    book ~ ("." | "_")? ~ identifier
 }
 
 book = ${

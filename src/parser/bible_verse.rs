@@ -251,4 +251,16 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn sefaria_valid_refs_underscore_as_seperator() {
+        assert_eq!(
+            parse_verse("Pirkei_Avot_2.1"),
+            ReturnedBibleVerse {
+                book: "Pirkei_Avot".to_string(),
+                section: Some("2".to_string()),
+                verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
 }
