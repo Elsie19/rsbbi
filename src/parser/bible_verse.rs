@@ -36,7 +36,7 @@ pub struct ReturnedBibleVerse {
     pub verse: Option<BibleRange>,
 }
 
-pub fn parse_verse(verse: &String) -> ReturnedBibleVerse {
+pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
     let parsed_bible_verse = BibleVerse::parse(Rule::total, &verse)
         .expect("Could not parse bible verse")
         .next()
