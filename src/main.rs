@@ -92,7 +92,7 @@ fn main() {
             } else {
                 for i in parsed_json[language].as_array().iter() {
                     match bible_verse_range {
-                        BibleRange::Range((_first, _last)) => {
+                        BibleRange::Range((_, _)) => {
                             for j in i.iter() {
                                 output.push(j.as_str().expect("Could not parse"));
                             }
