@@ -146,7 +146,7 @@ fn main() {
             let query =
                 json!({ "query": rest.join(" ").to_string(), "type": "text", "size": *size, });
             let mut formatted_string = vec![];
-            let serded_query = serde_json::to_value(&query).unwrap();
+            let serded_query = serde_json::to_value(query).unwrap();
             let text = post_download(
                 "https://www.sefaria.org/api/search-wrapper",
                 serded_query.to_string(),
