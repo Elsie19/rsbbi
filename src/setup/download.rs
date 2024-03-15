@@ -18,7 +18,7 @@ pub fn setup_toc() {
     .collect();
 
     if !Path::new(&path).exists() {
-        std::fs::create_dir_all(&path.parent().unwrap()).unwrap();
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
 
         let mut out =
             File::create(path).expect("Could not write/open '~/.local/share/rsbbi/toc.json'");

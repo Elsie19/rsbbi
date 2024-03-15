@@ -18,5 +18,5 @@ pub fn check_for_tetra(text: &Vec<Value>) -> bool {
             return true;
         }
     }
-    return false;
+    false
 }

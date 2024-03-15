@@ -6,7 +6,7 @@ use pest_derive::Parser;
 pub struct BibleVerse;
 
 pub fn range_to_rs_range(range: &str) -> (usize, usize) {
-    let mut parts = range.split("-");
+    let mut parts = range.split('-');
     (
         parts
             .next()
@@ -37,7 +37,7 @@ pub struct ReturnedBibleVerse {
 }
 
 pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
-    let parsed_bible_verse = BibleVerse::parse(Rule::total, &verse)
+    let parsed_bible_verse = BibleVerse::parse(Rule::total, verse)
         .expect("Could not parse bible verse")
         .next()
         .unwrap();

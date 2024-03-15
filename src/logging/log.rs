@@ -17,7 +17,7 @@ impl Log<'_> {
     pub fn new(path: &Path) -> Result<Log, std::io::Error> {
         let prefix = &path.parent().unwrap();
         std::fs::create_dir_all(prefix).unwrap();
-        match OpenOptions::new().create(true).write(true).open(&path) {
+        match OpenOptions::new().create(true).write(true).open(path) {
             Ok(_) => Ok(Log { file: path }),
             Err(e) => Err(e),
         }
@@ -32,11 +32,7 @@ impl Log<'_> {
     pub fn log(&self, text: Vec<serde_json::Value>) {
         #[cfg(feature = "tetragrammaton-logging")]
         {
-            let mut file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(self.file)
-                .unwrap();
+            let mut file = OpenOptions::new().append(true).open(self.file).unwrap();
 
             for line in text {
                 writeln!(file, "{}", line).unwrap();

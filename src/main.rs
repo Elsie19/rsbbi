@@ -13,12 +13,11 @@ use parser::tetragrammaton::check_for_tetra;
 use serde_json::json;
 use serde_json::Value;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
-use urlencoding;
 
 fn main() {
     let args = Args::parse();
     let parameters = vec![("commentary", "0"), ("stripItags", "1"), ("context", "0")];
-    setup::setup::setup_toc();
+    setup::download::setup_toc();
     let mut formatted_string: Vec<String> = vec![];
 
     let mut skin = MadSkin::default();
@@ -43,9 +42,7 @@ fn main() {
                 parameters,
             );
 
-            let language = if *hebrew {
-                "he"
-            } else if parsed_json["text"].as_array().unwrap().is_empty() {
+            let language = if *hebrew || parsed_json["text"].as_array().unwrap().is_empty() {
                 "he"
             } else {
                 "text"
@@ -63,8 +60,7 @@ fn main() {
             let bible_verse_range = parsed_verse.verse.unwrap();
 
             let tetra_checking: Vec<Value> = if parsed_json[language].is_string() {
-                let mut dunno: Vec<Value> = vec![];
-                dunno.push(parsed_json[language].clone());
+                let dunno: Vec<Value> = vec![parsed_json[language].clone()];
                 dunno
             } else {
                 parsed_json[language].as_array().unwrap().to_vec()
@@ -132,10 +128,10 @@ fn main() {
                         formatted_string.push(format!(
                             "> *{}* {}\n",
                             num,
-                            output_vec.get(0).unwrap()
+                            output_vec.first().unwrap()
                         ))
                     } else {
-                        formatted_string.push(format!("> {}\n", output_vec.get(0).unwrap()))
+                        formatted_string.push(format!("> {}\n", output_vec.first().unwrap()))
                     }
                 }
             }
