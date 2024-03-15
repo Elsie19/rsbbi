@@ -20,6 +20,10 @@ pub enum Commands {
         #[clap(short, long)]
         lines: bool,
 
+        /// Use Hebrew instead of English
+        #[clap(long, default_value_t = false)]
+        hebrew: bool,
+
         /// Verse
         #[clap(required = true)]
         rest: Vec<String>,

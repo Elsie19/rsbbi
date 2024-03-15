@@ -26,7 +26,11 @@ fn main() {
     skin.bold.set_fg(Blue);
 
     match &args.cmd {
-        Commands::Search { lines, rest } => {
+        Commands::Search {
+            lines,
+            hebrew,
+            rest,
+        } => {
             let spaced_rest = rest.join(" ");
             let mut parsed_verse = parse_verse(&spaced_rest);
 
@@ -39,7 +43,9 @@ fn main() {
                 parameters,
             );
 
-            let lang = if parsed_json["text"].as_array().unwrap().is_empty() {
+            let language = if *hebrew {
+                "he"
+            } else if parsed_json["text"].as_array().unwrap().is_empty() {
                 "he"
             } else {
                 "text"
@@ -50,18 +56,18 @@ fn main() {
             if parsed_verse.verse.is_none() {
                 parsed_verse.verse = Some(BibleRange::Range((
                     1,
-                    parsed_json[lang].as_array().iter().len(),
+                    parsed_json[language].as_array().iter().len(),
                 )));
             }
 
             let bible_verse_range = parsed_verse.verse.unwrap();
 
-            let tetra_checking: Vec<Value> = if parsed_json[lang].is_string() {
+            let tetra_checking: Vec<Value> = if parsed_json[language].is_string() {
                 let mut dunno: Vec<Value> = vec![];
-                dunno.push(parsed_json[lang].clone());
+                dunno.push(parsed_json[language].clone());
                 dunno
             } else {
-                parsed_json[lang].as_array().unwrap().to_vec()
+                parsed_json[language].as_array().unwrap().to_vec()
             };
             if check_for_tetra(&tetra_checking) {
                 let path = suggested_path();
@@ -81,10 +87,10 @@ fn main() {
             formatted_string.push("\n---\n".to_string());
 
             let mut output = vec![];
-            if parsed_json[lang].is_string() {
-                output.push(parsed_json[lang].as_str().unwrap());
+            if parsed_json[language].is_string() {
+                output.push(parsed_json[language].as_str().unwrap());
             } else {
-                for i in parsed_json[lang].as_array().iter() {
+                for i in parsed_json[language].as_array().iter() {
                     match bible_verse_range {
                         BibleRange::Range((_first, _last)) => {
                             for j in i.iter() {
