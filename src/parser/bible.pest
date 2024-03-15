@@ -11,7 +11,7 @@ set = _{
 
 book = ${
     // Conforms to everything in https://developers.sefaria.org/docs/text-references#text-references-aka-citations
-    (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ (whitespace_with_commas ~ ASCII_ALPHA+)*)? ~ "."?)
+    (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ (whitespace_with_commas ~ ASCII_ALPHA+)*)? ~ ("."? ~ "")?)
 }
 
 identifier = _{
