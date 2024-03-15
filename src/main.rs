@@ -39,23 +39,29 @@ fn main() {
                 parameters,
             );
 
+            let lang = if parsed_json["text"].as_array().unwrap().is_empty() {
+                "he"
+            } else {
+                "text"
+            };
+
             // If we never got a range, we should get the full text, then set that to the range of
             // 0..text.len() so we get the full text
             if parsed_verse.verse.is_none() {
                 parsed_verse.verse = Some(BibleRange::Range((
-                    0,
-                    parsed_json["text"].as_array().iter().len(),
+                    1,
+                    parsed_json[lang].as_array().iter().len(),
                 )));
             }
 
             let bible_verse_range = parsed_verse.verse.unwrap();
 
-            let tetra_checking: Vec<Value> = if parsed_json["text"].is_string() {
+            let tetra_checking: Vec<Value> = if parsed_json[lang].is_string() {
                 let mut dunno: Vec<Value> = vec![];
-                dunno.push(parsed_json["text"].clone());
+                dunno.push(parsed_json[lang].clone());
                 dunno
             } else {
-                parsed_json["text"].as_array().unwrap().to_vec()
+                parsed_json[lang].as_array().unwrap().to_vec()
             };
             if check_for_tetra(&tetra_checking) {
                 let path = suggested_path();
@@ -75,10 +81,10 @@ fn main() {
             formatted_string.push("\n---\n".to_string());
 
             let mut output = vec![];
-            if parsed_json["text"].is_string() {
-                output.push(parsed_json["text"].as_str().unwrap());
+            if parsed_json[lang].is_string() {
+                output.push(parsed_json[lang].as_str().unwrap());
             } else {
-                for i in parsed_json["text"].as_array().iter() {
+                for i in parsed_json[lang].as_array().iter() {
                     match bible_verse_range {
                         BibleRange::Range((_first, _last)) => {
                             for j in i.iter() {
