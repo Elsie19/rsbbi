@@ -31,7 +31,7 @@ pub enum Commands {
 
     /// Search keywords
     ///
-    /// This command will search keywords in Jewish literature
+    /// Search keywords in Jewish literature
     #[clap(aliases = &["key", "k"])]
     Keyword {
         /// Limit output size
@@ -45,7 +45,7 @@ pub enum Commands {
 
     /// Get info on a book
     ///
-    /// This command will search keywords in Jewish literature
+    /// Get info on a book
     #[clap(aliases = &["i", "in", "inf"])]
     Info {
         /// Book
