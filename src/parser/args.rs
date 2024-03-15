@@ -45,7 +45,7 @@ pub enum Commands {
 
     /// Get info on a book
     ///
-    /// Get info on a book
+    /// Get info on a book in the Sefaria library
     #[clap(aliases = &["i", "in", "inf"])]
     Info {
         /// Book
