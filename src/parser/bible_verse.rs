@@ -239,4 +239,16 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn sefaria_valid_refs_underscore() {
+        assert_eq!(
+            parse_verse("Song_of_Songs 2:4"),
+            ReturnedBibleVerse {
+                book: "Song_of_Songs".to_string(),
+                section: Some("2".to_string()),
+                verse: Some(BibleRange::Number(4)),
+            }
+        );
+    }
 }

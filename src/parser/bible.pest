@@ -3,15 +3,15 @@ total = { SOI ~ set ~ EOI }
 
 WHITESPACE = _{ " " }
 
-whitespace_with_commas = _{ " " | ", " | "\t" }
+whitespace_with_commas = _{ " " | ", " | "\t" | "_" }
 
 set = _{
     book ~ identifier
 }
 
 book = ${
-    // Should cover things like: `Dueteronomy`, `1 Chronicles`, `Zohar, Noach`
-    (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ whitespace_with_commas ~ ASCII_ALPHA+) | ASCII_ALPHA+)
+    // Conforms to everything in https://developers.sefaria.org/docs/text-references#text-references-aka-citations
+    (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ (whitespace_with_commas ~ ASCII_ALPHA+)*))
 }
 
 identifier = _{
