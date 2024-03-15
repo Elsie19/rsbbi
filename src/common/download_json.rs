@@ -26,6 +26,5 @@ pub fn post_download(url: &str, body: String, parameters: Vec<(&str, &str)>) -> 
         .text()
         .unwrap();
 
-    let p: Root = serde_json::from_str(&response).unwrap();
-    p
+    serde_json::from_str(&response).unwrap()
 }
