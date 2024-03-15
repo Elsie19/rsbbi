@@ -175,17 +175,19 @@ fn main() {
 
             for section in raw_index {
                 if section.title == spaced_rest {
-                    formatted_string.push(format!(
-                        "**{} ~ {}**\nChapters: **{}**\nVerses: **{}**",
-                        section.title,
-                        section.section,
-                        section.length,
-                        section.chapters.iter().sum::<i64>(),
-                    ));
+                    skin.print_text(
+                        format!(
+                            "**{} ~ {}**\nChapters: **{}**\nVerses: **{}**",
+                            section.title,
+                            section.section,
+                            section.length,
+                            section.chapters.iter().sum::<i64>(),
+                        )
+                        .as_str(),
+                    );
                     break;
                 }
             }
-            skin.print_text(&formatted_string.join("\n"));
         }
     }
 }
