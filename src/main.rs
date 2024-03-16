@@ -13,17 +13,17 @@ use parser::shape::{shape_download, Shape};
 use parser::tetragrammaton::check_for_tetra;
 use parser::text::convert_to_text;
 use serde_json::json;
-use termimad::{self, crossterm::style::Color::*, MadSkin};
+use setup::skin;
+use xdg;
 
 fn main() {
     let args = Args::parse();
+    let xdg_dirs = xdg::BaseDirectories::with_prefix(std::env!("CARGO_PKG_NAME")).unwrap();
     let parameters = vec![("commentary", "0"), ("stripItags", "1"), ("context", "0")];
     setup::download::setup_toc();
     let mut formatted_string: Vec<String> = vec![];
 
-    let mut skin = MadSkin::default();
-    skin.italic.set_fg(Blue);
-    skin.bold.set_fg(Blue);
+    let skin = skin::get_config(&xdg_dirs.place_config_file("style.json").unwrap());
 
     match &args.cmd {
         Commands::Search {

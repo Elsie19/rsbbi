@@ -1,0 +1,25 @@
+{
+    "bold": "Blue Bold",
+    "italic": "Yellow Italic",
+    "strikeout": "CrossedOut",
+    "inline_code": "ansi(249) ansi(235)",
+    "ellipsis": "",
+    "bullet": "⟡ ansi(240)",
+    "quote": "▐ ansi(244) Bold",
+    "horizontal_rule": "― ansi(238)",
+    "scrollbar": "▐ ansi(253) ansi(237)",
+    "paragraph": "",
+    "code_block": "ansi(249) ansi(235) ",
+    "table": "ansi(239) ",
+    "headers": [
+        "Bold Underlined center",
+        "Underlined ",
+        "Underlined ",
+        "Underlined ",
+        "Underlined ",
+        "Underlined ",
+        "Underlined ",
+        "Underlined "
+    ],
+    "table_border_chars": "standard"
+}
