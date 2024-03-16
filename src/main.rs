@@ -10,8 +10,8 @@ use parser::args::{Args, Commands};
 use parser::bible_verse::{parse_verse, BibleRange};
 use parser::shape::{shape_download, Shape};
 use parser::tetragrammaton::check_for_tetra;
+use parser::text::convert_to_text;
 use serde_json::json;
-use serde_json::Value;
 use termimad::{self, crossterm::style::Color::*, MadSkin};
 
 fn main() {
@@ -42,33 +42,28 @@ fn main() {
                 parameters,
             );
 
-            let language = if *hebrew || parsed_json["text"].as_array().unwrap().is_empty() {
+            let text = convert_to_text(&parsed_json["text"]).unwrap();
+
+            let language = if *hebrew || text.is_empty() {
                 "he"
             } else {
                 "text"
             };
 
+            let text = convert_to_text(&parsed_json[language]).unwrap();
+
             // If we never got a range, we should get the full text, then set that to the range of
             // 0..text.len() so we get the full text
             if parsed_verse.verse.is_none() {
-                parsed_verse.verse = Some(BibleRange::Range((
-                    1,
-                    parsed_json[language].as_array().iter().len(),
-                )));
+                parsed_verse.verse = Some(BibleRange::Range((1, text.iter().len())));
             }
 
             let bible_verse_range = parsed_verse.verse.unwrap();
 
-            let tetra_checking: Vec<Value> = if parsed_json[language].is_string() {
-                let dunno: Vec<Value> = vec![parsed_json[language].clone()];
-                dunno
-            } else {
-                parsed_json[language].as_array().unwrap().to_vec()
-            };
-            if check_for_tetra(&tetra_checking) {
+            if check_for_tetra(&text) {
                 let path = suggested_path();
                 let log = Log::new(&path).unwrap();
-                log.log(tetra_checking);
+                log.log(text.clone());
             }
 
             formatted_string.push(format!(
@@ -82,19 +77,8 @@ fn main() {
             ));
             formatted_string.push("\n---\n".to_string());
 
-            let mut output = vec![];
-            if parsed_json[language].is_string() {
-                output.push(parsed_json[language].as_str().unwrap());
-            } else {
-                for i in parsed_json[language].as_array().iter() {
-                    for j in i.iter() {
-                        output.push(j.as_str().expect("Could not parse"));
-                    }
-                }
-            }
-
             let mut output_vec = vec![];
-            for line in &output {
+            for line in text {
                 output_vec.push(html2md::parse_html(line));
             }
 

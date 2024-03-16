@@ -29,7 +29,7 @@ impl Log<'_> {
     }
 
     #[allow(unused_variables)]
-    pub fn log(&self, text: Vec<serde_json::Value>) {
+    pub fn log(&self, text: Vec<&str>) {
         #[cfg(feature = "tetragrammaton-logging")]
         {
             let mut file = OpenOptions::new().append(true).open(self.file).unwrap();

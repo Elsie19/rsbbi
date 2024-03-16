@@ -4,17 +4,11 @@
 // tetragrammaton in here, so I'll just convert it to UTF8 hex and hehehehe.
 // Source? My friend. Idk ask him if you have questions @oklopfer.
 
-use serde_json::Value;
-
 static TETRA: &[u8] = b"\xd7\x99\xd7\x94\xd7\x95\xd7\x94";
 
-pub fn check_for_tetra(text: &Vec<Value>) -> bool {
+pub fn check_for_tetra(text: &Vec<&str>) -> bool {
     for line in text {
-        if line
-            .as_str()
-            .expect("Could not parse line checking for the tetragrammaton")
-            .contains(std::str::from_utf8(TETRA).unwrap())
-        {
+        if line.contains(std::str::from_utf8(TETRA).unwrap()) {
             return true;
         }
     }
