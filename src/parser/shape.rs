@@ -1,5 +1,6 @@
 use reqwest;
 use serde::{Deserialize, Serialize};
+use serde_json::Result;
 
 pub type Shape = Vec<ShapeContents>;
 
@@ -15,7 +16,7 @@ pub struct ShapeContents {
     pub he_book: String,
 }
 
-pub fn shape_download(url: &str, parameters: Vec<(&str, &str)>) -> Shape {
+pub fn shape_download(url: &str, parameters: Vec<(&str, &str)>) -> Result<Shape> {
     let client = reqwest::blocking::Client::new();
     let response = client
         .get(url)
@@ -25,5 +26,5 @@ pub fn shape_download(url: &str, parameters: Vec<(&str, &str)>) -> Shape {
         .text()
         .unwrap();
 
-    serde_json::from_str(&response).unwrap()
+    serde_json::from_str(&response)
 }

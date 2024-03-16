@@ -8,6 +8,7 @@ use common::download_json::{download, post_download};
 use logging::log::{suggested_path, Log};
 use parser::args::{Args, Commands};
 use parser::bible_verse::{parse_verse, BibleRange};
+use parser::info::handle_info;
 use parser::shape::{shape_download, Shape};
 use parser::tetragrammaton::check_for_tetra;
 use parser::text::convert_to_text;
@@ -137,28 +138,29 @@ fn main() {
                 _ => book.join(" "),
             };
 
-            let raw_index: Shape = shape_download(
+            let raw_index: Shape = match shape_download(
                 format!(
                     "https://www.sefaria.org/api/shape/{}",
                     urlencoding::encode(&spaced_rest)
                 )
                 .as_str(),
                 [("", "")].to_vec(),
-            );
-
-            for section in raw_index {
-                if section.title == book.join(" ") {
-                    skin.print_text(
-                        format!(
-                            "**{} ~ {}**\nChapters: **{}**\nVerses: **{}**",
-                            section.title,
-                            section.section,
-                            section.length,
-                            section.chapters.iter().sum::<i64>(),
-                        )
-                        .as_str(),
+            ) {
+                Ok(yas) => yas,
+                Err(nar) => {
+                    eprintln!(
+                        "Could not get response with book: {}: {}",
+                        &spaced_rest, nar
                     );
-                    break;
+                    std::process::exit(1);
+                }
+            };
+
+            match handle_info(&raw_index, &book.join(" ")) {
+                Ok(text) => skin.print_text(&text),
+                Err(err) => {
+                    eprintln!("{}", err);
+                    std::process::exit(1);
                 }
             }
         }
