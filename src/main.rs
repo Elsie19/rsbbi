@@ -132,19 +132,22 @@ fn main() {
             skin.print_text(&formatted_string.join("\n"));
         }
         Commands::Info { book } => {
-            let spaced_rest = book.join(" ");
+            let spaced_rest: String = match book.join(" ").as_str() {
+                "Torah" => "Tanakh/Torah".to_string(),
+                _ => book.join(" "),
+            };
 
             let raw_index: Shape = shape_download(
                 format!(
                     "https://www.sefaria.org/api/shape/{}",
-                    urlencoding::encode(&parse_verse(&spaced_rest).book)
+                    urlencoding::encode(&spaced_rest)
                 )
                 .as_str(),
                 [("", "")].to_vec(),
             );
 
             for section in raw_index {
-                if section.title == spaced_rest {
+                if section.title == book.join(" ") {
                     skin.print_text(
                         format!(
                             "**{} ~ {}**\nChapters: **{}**\nVerses: **{}**",
