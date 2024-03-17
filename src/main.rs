@@ -116,12 +116,9 @@ fn main() {
                         formatted_string.push(format!("> {}\n", output_vec.first().unwrap()));
                     }
                 }
-                BibleRange::ChapterRange(
-                    (first_section, first_verse),
-                    (second_section, second_verse),
-                ) => {
+                BibleRange::ChapterRange((_, first_verse), (_, second_verse)) => {
                     let mut seep_into_chapter = false;
-                    for (idx, _line) in output_vec.iter().enumerate() {
+                    for (idx, _) in output_vec.iter().enumerate() {
                         if idx != output_vec.len() - second_verse {
                             let verse_offsetter = if seep_into_chapter {
                                 idx as i64 - output_vec.len() as i64 + second_verse as i64 + 1
@@ -138,11 +135,17 @@ fn main() {
                                 format!("> {}", output_vec.get(idx).unwrap())
                             });
 
-                            formatted_string.push(if idx != output_vec.len() - second_verse - 1 {
-                                "\n>\n".to_string()
+                            if seep_into_chapter && idx == output_vec.len() - 1 {
+                                formatted_string.push("\n".to_string())
                             } else {
-                                "\n".to_string()
-                            });
+                                formatted_string.push(
+                                    if idx != output_vec.len() - second_verse - 1 {
+                                        "\n>\n".to_string()
+                                    } else {
+                                        "\n".to_string()
+                                    },
+                                );
+                            }
                         } else {
                             formatted_string.push("---\n".to_string());
                             formatted_string.push(format!(
