@@ -51,7 +51,13 @@ fn main() {
                 "text"
             };
 
-            let text = convert_to_text(&parsed_json[language]).unwrap();
+            let text = match convert_to_text(&parsed_json[language]) {
+                Ok(yas) => yas,
+                Err(nar) => {
+                    eprintln!("{}", nar);
+                    std::process::exit(1);
+                }
+            };
 
             // If we never got a range, we should get the full text, then set that to the range of
             // 0..text.len() so we get the full text
@@ -113,7 +119,54 @@ fn main() {
                 BibleRange::ChapterRange(
                     (first_section, first_verse),
                     (second_section, second_verse),
-                ) => todo!(),
+                ) => {
+                    let mut seep_into_chapter = false;
+                    for (idx, _line) in output_vec.iter().enumerate() {
+                        if idx != output_vec.len() - second_verse {
+                            let verse_offsetter = if seep_into_chapter {
+                                idx as i64 - output_vec.len() as i64 + second_verse as i64 + 1
+                            } else {
+                                (idx + first_verse).try_into().unwrap()
+                            };
+                            formatted_string.push(if *lines {
+                                format!(
+                                    "> *{}* {}",
+                                    (verse_offsetter),
+                                    output_vec.get(idx).unwrap()
+                                )
+                            } else {
+                                format!("> {}", output_vec.get(idx).unwrap())
+                            });
+
+                            formatted_string.push(if idx != output_vec.len() - second_verse - 1 {
+                                "\n>\n".to_string()
+                            } else {
+                                "\n".to_string()
+                            });
+                        } else {
+                            formatted_string.push("---\n".to_string());
+                            formatted_string.push(format!(
+                                "# {}",
+                                parsed_json
+                                    .get("spanningRefs")
+                                    .expect("Could not parse out 'book'")
+                                    .as_array()
+                                    .unwrap()
+                                    .get(1)
+                                    .unwrap()
+                                    .as_str()
+                                    .unwrap(),
+                            ));
+                            formatted_string.push("\n---\n".to_string());
+                            formatted_string.push(if *lines {
+                                format!("> *{}* {}\n>\n", 1, output_vec.get(idx).unwrap())
+                            } else {
+                                format!("> {}\n>\n", output_vec.get(idx).unwrap())
+                            });
+                            seep_into_chapter = true;
+                        }
+                    }
+                }
             }
 
             skin.print_text(&formatted_string.join(""));
