@@ -14,8 +14,9 @@ book = ${
     (number ~ WHITESPACE)? ~ ((ASCII_ALPHA+ ~ (whitespace_with_commas ~ ASCII_ALPHA+)*)? ~ ("."? ~ "")?)
 }
 
+// This can be either something like `chapter:verse`, `chapter:verse-verse`, or `chapter:verse-chapter:verse`
 identifier = _{
-    (section ~ ((":" | "." | ",") ~ verse)?)?
+    (chapter_range | (section ~ ((":" | "." | ",") ~ verse)?)?)
 }
 
 section = {
@@ -31,4 +32,7 @@ number = _{ ASCII_DIGIT+ }
 
 verse_number = { ASCII_DIGIT+ }
 
-range = { ASCII_ALPHANUMERIC+ ~ "-" ~ ASCII_ALPHANUMERIC+ }
+// 1: 1-3
+// 2: 1:1-4:3
+range         = { ASCII_ALPHANUMERIC+ ~ "-" ~ ASCII_ALPHANUMERIC+ }
+chapter_range = { (#first_section = section ~ (":" | "." | ",") ~ #first_verse = verse_number) ~ "-" ~ (#second_section = section ~ (":" | "." | ",") ~ #second_verse = verse_number) }

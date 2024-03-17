@@ -110,6 +110,10 @@ fn main() {
                         formatted_string.push(format!("> {}\n", output_vec.first().unwrap()));
                     }
                 }
+                BibleRange::ChapterRange(
+                    (first_section, first_verse),
+                    (second_section, second_verse),
+                ) => todo!(),
             }
 
             skin.print_text(&formatted_string.join(""));

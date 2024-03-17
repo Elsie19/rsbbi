@@ -25,8 +25,14 @@ pub fn range_to_rs_range(range: &str) -> (usize, usize) {
 
 #[derive(Debug, PartialEq)]
 pub enum BibleRange {
+    // 5:^2^
     Number(usize),
+    // 5:^2-5^
     Range((usize, usize)),
+    //HACK: I don't like this, but this should for future reference override
+    //ReturnedBibleVerse.section so that ChapterRange((first_section, first_verse),
+    //(second_section, second_verse))
+    ChapterRange((usize, usize), (usize, usize)),
 }
 
 #[derive(Debug, PartialEq)]
@@ -46,7 +52,7 @@ pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
     let mut section: Option<String> = None;
     let mut opt_bible_verse_range: Option<BibleRange> = None;
 
-    for line in parsed_bible_verse.into_inner() {
+    for line in parsed_bible_verse.clone().into_inner() {
         match line.as_rule() {
             Rule::EOI => break,
             Rule::book => book = line.as_str().to_string(),
@@ -67,6 +73,46 @@ pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
                     )),
                     _ => unreachable!(),
                 };
+            }
+            Rule::chapter_range => {
+                //FIX: WTF
+                let first_section = parsed_bible_verse
+                    .clone()
+                    .into_inner()
+                    .find_first_tagged("first_section")
+                    .unwrap()
+                    .as_str()
+                    .parse::<usize>()
+                    .unwrap();
+                let first_verse = parsed_bible_verse
+                    .clone()
+                    .into_inner()
+                    .find_first_tagged("first_verse")
+                    .unwrap()
+                    .as_str()
+                    .parse::<usize>()
+                    .unwrap();
+                let second_section = parsed_bible_verse
+                    .clone()
+                    .into_inner()
+                    .find_first_tagged("second_section")
+                    .unwrap()
+                    .as_str()
+                    .parse::<usize>()
+                    .unwrap();
+                let second_verse = parsed_bible_verse
+                    .clone()
+                    .into_inner()
+                    .find_first_tagged("second_verse")
+                    .unwrap()
+                    .as_str()
+                    .parse::<usize>()
+                    .unwrap();
+
+                opt_bible_verse_range = Some(BibleRange::ChapterRange(
+                    (first_section, first_verse),
+                    (second_section, second_verse),
+                ))
             }
             _ => (),
         }
@@ -308,6 +354,18 @@ mod tests {
                 book: "Berakhot".to_string(),
                 section: Some("2a".to_string()),
                 verse: Some(BibleRange::Number(1)),
+            }
+        );
+    }
+
+    #[test]
+    fn sefaria_valid_refs_chapter_range() {
+        assert_eq!(
+            parse_verse("Exodus 18:1-20:23"),
+            ReturnedBibleVerse {
+                book: "Exodus".to_string(),
+                section: None,
+                verse: Some(BibleRange::ChapterRange((18, 1), (20, 23))),
             }
         );
     }
