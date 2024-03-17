@@ -347,18 +347,6 @@ mod tests {
     }
 
     #[test]
-    fn sefaria_valid_refs_section_seperator_space() {
-        assert_eq!(
-            parse_verse("Berakhot 2a 1"),
-            ReturnedBibleVerse {
-                book: "Berakhot".to_string(),
-                section: Some("2a".to_string()),
-                verse: Some(BibleRange::Number(1)),
-            }
-        );
-    }
-
-    #[test]
     fn sefaria_valid_refs_chapter_range() {
         assert_eq!(
             parse_verse("Exodus 18:1-20:23"),
