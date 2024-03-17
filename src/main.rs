@@ -14,7 +14,6 @@ use parser::tetragrammaton::check_for_tetra;
 use parser::text::convert_to_text;
 use serde_json::json;
 use setup::skin;
-use xdg;
 
 fn main() {
     let args = Args::parse();
