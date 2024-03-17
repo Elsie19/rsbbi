@@ -115,6 +115,8 @@ fn main() {
                         formatted_string.push(format!("> {}\n", output_vec.first().unwrap()));
                     }
                 }
+                //NOTE: Hey because I'm a dumb fucking idiot this only works when you have
+                //contiguous chapters, so fuck me I guess
                 BibleRange::ChapterRange((_, first_verse), (_, second_verse)) => {
                     let mut seep_into_chapter = false;
                     for (idx, _) in output_vec.iter().enumerate() {
