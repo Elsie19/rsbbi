@@ -141,7 +141,7 @@ fn main() {
             let parsed_verse = parse_verse(book.join(" ").as_str());
             let spaced_rest: String = match parsed_verse.book.as_str() {
                 "Torah" => "Tanakh/Torah".to_string(),
-                _ => parsed_verse.book.clone(),
+                default => default.to_string(),
             };
 
             let raw_index: Shape = match shape_download(
