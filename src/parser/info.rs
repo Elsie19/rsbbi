@@ -30,7 +30,7 @@ pub fn handle_info(
     }
     if info_vec.is_empty() {
         Err(anyhow!(
-            "Could not loop over index in 'handle_info' in subcommand 'info'"
+            "Could not loop over index in 'handle_info' in subcommand 'info' because vector is empty"
         ))
     } else {
         Ok(info_vec.join("\n---\n").to_string())
