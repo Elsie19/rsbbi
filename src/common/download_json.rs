@@ -1,5 +1,5 @@
 use crate::parser::keyword::Root;
-use reqwest;
+use reqwest::{self, header::USER_AGENT};
 use serde_json::Value;
 
 pub fn download(url: &str, parameters: Vec<(&str, &str)>) -> Value {
@@ -7,6 +7,10 @@ pub fn download(url: &str, parameters: Vec<(&str, &str)>) -> Value {
     let response = client
         .get(url)
         .query(&parameters)
+        .header(
+            USER_AGENT,
+            format!("RSBBI (gh:Elsie19/rsbbi) v{}", env!("CARGO_PKG_VERSION")),
+        )
         .send()
         .unwrap()
         .text()
@@ -21,6 +25,10 @@ pub fn post_download(url: &str, body: String, parameters: Vec<(&str, &str)>) -> 
         .post(url)
         .query(&parameters)
         .body(body)
+        .header(
+            USER_AGENT,
+            format!("RSBBI (gh:Elsie19/rsbbi) v{}", env!("CARGO_PKG_VERSION")),
+        )
         .send()
         .unwrap()
         .text()

@@ -59,7 +59,7 @@ pub fn parse_verse(verse: &str) -> Result<ReturnedBibleVerse, anyhow::Error> {
             Rule::book => book = line.as_str().to_string(),
             Rule::section => {
                 section = Some(line.as_str().to_string());
-                if section.is_some() && section.clone().unwrap().starts_with("0") {
+                if section.is_some() && section.clone().unwrap().starts_with('0') {
                     return Err(anyhow!(
                         "Section starts with '0' which is forbidden: {}",
                         section.unwrap()
@@ -71,15 +71,24 @@ pub fn parse_verse(verse: &str) -> Result<ReturnedBibleVerse, anyhow::Error> {
                     Rule::range => Some(BibleRange::Range(range_to_rs_range(
                         line.into_inner().next().unwrap().as_str().trim(),
                     ))),
-                    Rule::verse_number => Some(BibleRange::Number(
-                        line.into_inner()
+                    Rule::verse_number => {
+                        let number: usize = line
+                            .into_inner()
                             .next()
                             .unwrap()
                             .as_str()
                             .trim()
                             .parse()
-                            .unwrap(),
-                    )),
+                            .unwrap();
+
+                        if number.to_string().starts_with('0') {
+                            return Err(anyhow!(
+                                "Verse number starts with '0' which is forbidden: {}",
+                                number
+                            ));
+                        }
+                        Some(BibleRange::Number(number))
+                    }
                     _ => unreachable!(),
                 };
             }
