@@ -138,9 +138,10 @@ fn main() {
             skin.print_text(&formatted_string.join("\n"));
         }
         Commands::Info { book } => {
-            let spaced_rest: String = match book.join(" ").as_str() {
+            let parsed_verse = parse_verse(book.join(" ").as_str());
+            let spaced_rest: String = match parsed_verse.book.as_str() {
                 "Torah" => "Tanakh/Torah".to_string(),
-                _ => book.join(" "),
+                _ => parsed_verse.book.clone(),
             };
 
             let raw_index: Shape = match shape_download(
@@ -161,7 +162,7 @@ fn main() {
                 }
             };
 
-            match handle_info(&raw_index, &book.join(" ")) {
+            match handle_info(&raw_index, &book.join(" "), &parsed_verse) {
                 Ok(text) => skin.print_text(&text),
                 Err(err) => {
                     eprintln!("{}", err);
