@@ -31,7 +31,13 @@ fn main() {
             rest,
         } => {
             let spaced_rest = rest.join(" ");
-            let mut parsed_verse = parse_verse(&spaced_rest);
+            let mut parsed_verse = match parse_verse(&spaced_rest) {
+                Ok(yas) => yas,
+                Err(nar) => {
+                    eprintln!("{}", nar);
+                    std::process::exit(1);
+                }
+            };
 
             let parsed_json = download(
                 format!(
@@ -138,7 +144,13 @@ fn main() {
             skin.print_text(&formatted_string.join("\n"));
         }
         Commands::Info { book } => {
-            let parsed_verse = parse_verse(book.join(" ").as_str());
+            let parsed_verse = match parse_verse(book.join(" ").as_str()) {
+                Ok(yas) => yas,
+                Err(nar) => {
+                    eprintln!("{}", nar);
+                    std::process::exit(1);
+                }
+            };
             let spaced_rest: String = match parsed_verse.book.as_str() {
                 "Torah" => "Tanakh/Torah".to_string(),
                 default => default.to_string(),

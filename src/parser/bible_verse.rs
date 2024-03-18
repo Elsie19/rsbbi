@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use pest::Parser;
 use pest_derive::Parser;
 
@@ -42,7 +43,7 @@ pub struct ReturnedBibleVerse {
     pub verse: Option<BibleRange>,
 }
 
-pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
+pub fn parse_verse(verse: &str) -> Result<ReturnedBibleVerse, anyhow::Error> {
     let parsed_bible_verse = BibleVerse::parse(Rule::total, verse)
         .expect("Could not parse bible verse")
         .next()
@@ -56,7 +57,15 @@ pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
         match line.as_rule() {
             Rule::EOI => break,
             Rule::book => book = line.as_str().to_string(),
-            Rule::section => section = Some(line.as_str().to_string()),
+            Rule::section => {
+                section = Some(line.as_str().to_string());
+                if section.is_some() && section.clone().unwrap().starts_with("0") {
+                    return Err(anyhow!(
+                        "Section starts with '0' which is forbidden: {}",
+                        section.unwrap()
+                    ));
+                }
+            }
             Rule::verse => {
                 opt_bible_verse_range = match line.clone().into_inner().next().unwrap().as_rule() {
                     Rule::range => Some(BibleRange::Range(range_to_rs_range(
@@ -118,11 +127,11 @@ pub fn parse_verse(verse: &str) -> ReturnedBibleVerse {
         }
     }
 
-    ReturnedBibleVerse {
+    Ok(ReturnedBibleVerse {
         book,
         section,
         verse: opt_bible_verse_range,
-    }
+    })
 }
 
 // Should conform to https://developers.sefaria.org/docs/text-references
@@ -133,7 +142,7 @@ mod tests {
     #[test]
     fn simple_name() {
         assert_eq!(
-            parse_verse("Genesis"),
+            parse_verse("Genesis").unwrap(),
             ReturnedBibleVerse {
                 book: "Genesis".to_string(),
                 section: None,
@@ -145,7 +154,7 @@ mod tests {
     #[test]
     fn comma_name() {
         assert_eq!(
-            parse_verse("Zohar, Noach"),
+            parse_verse("Zohar, Noach").unwrap(),
             ReturnedBibleVerse {
                 book: "Zohar, Noach".to_string(),
                 section: None,
@@ -157,7 +166,7 @@ mod tests {
     #[test]
     fn simple_name_with_section() {
         assert_eq!(
-            parse_verse("Genesis 1"),
+            parse_verse("Genesis 1").unwrap(),
             ReturnedBibleVerse {
                 book: "Genesis".to_string(),
                 section: Some(1.to_string()),
@@ -169,7 +178,7 @@ mod tests {
     #[test]
     fn simple_name_with_complex_section() {
         assert_eq!(
-            parse_verse("Deuteronomy 21b"),
+            parse_verse("Deuteronomy 21b").unwrap(),
             ReturnedBibleVerse {
                 book: "Deuteronomy".to_string(),
                 section: Some("21b".to_string()),
@@ -181,7 +190,7 @@ mod tests {
     #[test]
     fn complex_name_with_complex_section() {
         assert_eq!(
-            parse_verse("Zohar, Bo 21b"),
+            parse_verse("Zohar, Bo 21b").unwrap(),
             ReturnedBibleVerse {
                 book: "Zohar, Bo".to_string(),
                 section: Some("21b".to_string()),
@@ -193,7 +202,7 @@ mod tests {
     #[test]
     fn simple_name_with_verse() {
         assert_eq!(
-            parse_verse("Exodus 1:2"),
+            parse_verse("Exodus 1:2").unwrap(),
             ReturnedBibleVerse {
                 book: "Exodus".to_string(),
                 section: Some("1".to_string()),
@@ -205,7 +214,7 @@ mod tests {
     #[test]
     fn simple_name_with_range() {
         assert_eq!(
-            parse_verse("Leviticus 22:2-10"),
+            parse_verse("Leviticus 22:2-10").unwrap(),
             ReturnedBibleVerse {
                 book: "Leviticus".to_string(),
                 section: Some("22".to_string()),
@@ -217,7 +226,7 @@ mod tests {
     #[test]
     fn most_complex_everything() {
         assert_eq!(
-            parse_verse("4 Imaginary, Book 7b:2-10"),
+            parse_verse("4 Imaginary, Book 7b:2-10").unwrap(),
             ReturnedBibleVerse {
                 book: "4 Imaginary, Book".to_string(),
                 section: Some("7b".to_string()),
@@ -229,7 +238,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_book() {
         assert_eq!(
-            parse_verse("Bereishit"),
+            parse_verse("Bereishit").unwrap(),
             ReturnedBibleVerse {
                 book: "Bereishit".to_string(),
                 section: None,
@@ -241,7 +250,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_book_and_section() {
         assert_eq!(
-            parse_verse("Job 3"),
+            parse_verse("Job 3").unwrap(),
             ReturnedBibleVerse {
                 book: "Job".to_string(),
                 section: Some("3".to_string()),
@@ -253,7 +262,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_spaced_book_and_dot_section() {
         assert_eq!(
-            parse_verse("Mishna Berakhot 4.2"),
+            parse_verse("Mishna Berakhot 4.2").unwrap(),
             ReturnedBibleVerse {
                 book: "Mishna Berakhot".to_string(),
                 section: Some("4".to_string()),
@@ -265,7 +274,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_daf() {
         assert_eq!(
-            parse_verse("Sanhedrin 4b"),
+            parse_verse("Sanhedrin 4b").unwrap(),
             ReturnedBibleVerse {
                 book: "Sanhedrin".to_string(),
                 section: Some("4b".to_string()),
@@ -277,7 +286,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_abbreviation() {
         assert_eq!(
-            parse_verse("Ex. 12:2-8"),
+            parse_verse("Ex. 12:2-8").unwrap(),
             ReturnedBibleVerse {
                 book: "Ex.".to_string(),
                 section: Some("12".to_string()),
@@ -289,7 +298,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_underscore() {
         assert_eq!(
-            parse_verse("Song_of_Songs 2:4"),
+            parse_verse("Song_of_Songs 2:4").unwrap(),
             ReturnedBibleVerse {
                 book: "Song_of_Songs".to_string(),
                 section: Some("2".to_string()),
@@ -301,7 +310,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_underscore_as_seperator() {
         assert_eq!(
-            parse_verse("Pirkei_Avot_2.1"),
+            parse_verse("Pirkei_Avot_2.1").unwrap(),
             ReturnedBibleVerse {
                 book: "Pirkei_Avot".to_string(),
                 section: Some("2".to_string()),
@@ -313,7 +322,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_multiple_words() {
         assert_eq!(
-            parse_verse("Rambam Laws of Repentance 2:1"),
+            parse_verse("Rambam Laws of Repentance 2:1").unwrap(),
             ReturnedBibleVerse {
                 book: "Rambam Laws of Repentance".to_string(),
                 section: Some("2".to_string()),
@@ -325,7 +334,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_section_seperator_period() {
         assert_eq!(
-            parse_verse("Berakhot 2a.1"),
+            parse_verse("Berakhot 2a.1").unwrap(),
             ReturnedBibleVerse {
                 book: "Berakhot".to_string(),
                 section: Some("2a".to_string()),
@@ -337,7 +346,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_section_seperator_comma() {
         assert_eq!(
-            parse_verse("Berakhot 2a,1"),
+            parse_verse("Berakhot 2a,1").unwrap(),
             ReturnedBibleVerse {
                 book: "Berakhot".to_string(),
                 section: Some("2a".to_string()),
@@ -349,7 +358,7 @@ mod tests {
     #[test]
     fn sefaria_valid_refs_chapter_range() {
         assert_eq!(
-            parse_verse("Exodus 18:1-20:23"),
+            parse_verse("Exodus 18:1-20:23").unwrap(),
             ReturnedBibleVerse {
                 book: "Exodus".to_string(),
                 section: None,

@@ -28,7 +28,8 @@ verse = {
   | verse_number
 }
 
-number = _{ ASCII_DIGIT+ }
+// Number can be any number, as long as it does not *start* with 0
+number = _{ ASCII_NONZERO_DIGIT ~ (ASCII_DIGIT+)? }
 
 verse_number = { ASCII_DIGIT+ }
 
