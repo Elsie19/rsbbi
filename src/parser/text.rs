@@ -16,8 +16,8 @@ pub fn convert_to_text(text: &Value) -> Result<Vec<&str>, anyhow::Error> {
                 array_vec.push(piece.as_str().unwrap());
             }
         }
-        return Ok(array_vec);
+        Ok(array_vec)
     } else {
-        return Err(anyhow!("Could convert 'text' to string or array: {}", text));
+        Err(anyhow!("Could convert 'text' to string or array: {}", text))
     }
 }
