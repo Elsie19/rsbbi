@@ -49,7 +49,7 @@ pub fn parse_verse(verse: &str) -> Result<ReturnedBibleVerse, anyhow::Error> {
         .next()
         .unwrap();
 
-    let mut book: String = Default::default();
+    let mut book: String = String::default();
     let mut section: Option<String> = None;
     let mut opt_bible_verse_range: Option<BibleRange> = None;
 
