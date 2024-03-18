@@ -34,7 +34,7 @@ fn main() {
             let mut parsed_verse = match parse_verse(&spaced_rest) {
                 Ok(yas) => yas,
                 Err(nar) => {
-                    eprintln!("{}", nar);
+                    ferror!("{}", nar);
                     std::process::exit(1);
                 }
             };
@@ -59,7 +59,7 @@ fn main() {
             let text = match convert_to_text(&parsed_json[language]) {
                 Ok(yas) => yas,
                 Err(nar) => {
-                    eprintln!("{}", nar);
+                    ferror!("{}", nar);
                     std::process::exit(1);
                 }
             };
@@ -147,7 +147,7 @@ fn main() {
             let parsed_verse = match parse_verse(book.join(" ").as_str()) {
                 Ok(yas) => yas,
                 Err(nar) => {
-                    eprintln!("{}", nar);
+                    ferror!("{}", nar);
                     std::process::exit(1);
                 }
             };
@@ -166,9 +166,10 @@ fn main() {
             ) {
                 Ok(yas) => yas,
                 Err(nar) => {
-                    eprintln!(
+                    ferror!(
                         "Could not get response with book: {}: {}",
-                        &spaced_rest, nar
+                        &spaced_rest,
+                        nar
                     );
                     std::process::exit(1);
                 }
@@ -177,7 +178,7 @@ fn main() {
             match handle_info(&raw_index, &book.join(" "), &parsed_verse) {
                 Ok(text) => skin.print_text(&text),
                 Err(err) => {
-                    eprintln!("{}", err);
+                    ferror!("{}", err);
                     std::process::exit(1);
                 }
             }
